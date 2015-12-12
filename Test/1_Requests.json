@@ -1,106 +1,151 @@
 {
-  "settings": {
-    "timebank": "10000",
-    "time_per_move": "500",
-    "player_names": ["player1","player2"]    ,
-    "your_bot": "player1",
-    "field_height": "20",
-    "field_width": "10"
-  },
-  "update": {
-    "game":[
-      ["round": "1",
-      "this_piece_type": "O",
-      "next_piece_type": "I",
-      "this_piece_position": ["4","-1"]],
-      ["round": "2",
-      "this_piece_type": "I",
-      "next_piece_type": "J",
-      "this_piece_position": ["4","-1"]],
-      ["round": "3",
-      "this_piece_type": "J",
-      "next_piece_type": "O",
-      "this_piece_position": ["4","-1"]],
-      ["round": "4",
-      "this_piece_type": "O",
-      "next_piece_type": "S",
-      "this_piece_position": ["4","-1"]],
-      ["round": "5",
-      "this_piece_type": "S",
-      "next_piece_type": "S",
-      "this_piece_position": ["4","-1"]],
-      ["round": "6",
-      "this_piece_type": "S",
-      "next_piece_type": "Z",
-      "this_piece_position": ["4","-1"]],
-      ["round": "7",
-      "this_piece_type": "Z",
-      "next_piece_type": "I",
-      "this_piece_position": ["4","-1"]],
-      ["round": "8",
-      "this_piece_type": "I",
-      "next_piece_type": "T",
-      "this_piece_position": ["4","-1"]],
-      ["round": "9",
-      "this_piece_type": "T",
-      "next_piece_type": "O",
-      "this_piece_position": ["4","-1"]],
-      ["round": "10",
-      "this_piece_type": "O",
-      "next_piece_type": "S",
-      "this_piece_position": ["4","-1"]],
-      ["round": "11",
-      "this_piece_type": "S",
-      "next_piece_type": "Z",
-      "this_piece_position": ["4","-1"]],
-      ["round": "12",
-      "this_piece_type": "Z",
-      "next_piece_type": "T",
-      "this_piece_position": ["4","-1"]],
-      ["round": "13",
-      "this_piece_type": "T",
-      "next_piece_type": "I",
-      "this_piece_position": ["4","-1"]],
-      ["round": "14",
-      "this_piece_type": "I",
-      "next_piece_type": "J",
-      "this_piece_position": ["4","-1"]],
-      ["round": "15",
-      "this_piece_type": "J",
-      "next_piece_type": "S",
-      "this_piece_position": ["4","-1"]],
-      ["round": "16",
-      "this_piece_type": "S",
-      "next_piece_type": "L",
-      "this_piece_position": ["4","-1"]],
-      ["round": "17",
-      "this_piece_type": "L",
-      "next_piece_type": "O",
-      "this_piece_position": ["4","-1"]],
-      ["round": "18",
-      "this_piece_type": "O",
-      "next_piece_type": "I",
-      "this_piece_position": ["4","-1"]],
-      ["round": "19",
-      "this_piece_type": "I",
-      "next_piece_type": "T",
-      "this_piece_position": ["4","-1"]],
-      ["round": "20",
-      "this_piece_type": "T",
-      "next_piece_type": "Z",
-      "this_piece_position": ["4","-1"]],
-      ["round": "21",
-      "this_piece_type": "Z",
-      "next_piece_type": "S",
-      "this_piece_position": ["4","-1"]],
-      ["round": "1",
-      "this_piece_type": "S",
-      "next_piece_type": "I",
-      "this_piece_position": ["4","-1"]]
-    ]
-
-  }
-
-  }
-
+	"settings": {
+		"timebank": "10000",
+		"time_per_move": "500",
+		"player_names": ["player1", "player2"],
+		"your_bot": "player1",
+		"field_height": "20",
+		"field_width": "10"
+	},
+	"run": [
+		[{
+			"update": {
+				"game": [
+					[{
+						"round": "1",
+						"this_piece_type": "O",
+						"next_piece_type": "I",
+						"this_piece_position": ["4", "-1"]
+					}],
+					[{
+						"round": "2",
+						"this_piece_type": "I",
+						"next_piece_type": "J",
+						"this_piece_position": ["4", "-1"]
+					}],
+					[{
+						"round": "3",
+						"this_piece_type": "J",
+						"next_piece_type": "O",
+						"this_piece_position": ["4", "-1"]
+					}],
+					[{
+						"round": "4",
+						"this_piece_type": "O",
+						"next_piece_type": "S",
+						"this_piece_position": ["4", "-1"]
+					}],
+					[{
+						"round": "5",
+						"this_piece_type": "S",
+						"next_piece_type": "S",
+						"this_piece_position": ["4", "-1"]
+					}],
+					[{
+						"round": "6",
+						"this_piece_type": "S",
+						"next_piece_type": "Z",
+						"this_piece_position": ["4", "-1"]
+					}],
+					[{
+						"round": "7",
+						"this_piece_type": "Z",
+						"next_piece_type": "I",
+						"this_piece_position": ["4", "-1"]
+					}],
+					[{
+						"round": "8",
+						"this_piece_type": "I",
+						"next_piece_type": "T",
+						"this_piece_position": ["4", "-1"]
+					}],
+					[{
+						"round": "9",
+						"this_piece_type": "T",
+						"next_piece_type": "O",
+						"this_piece_position": ["4", "-1"]
+					}],
+					[{
+						"round": "10",
+						"this_piece_type": "O",
+						"next_piece_type": "S",
+						"this_piece_position": ["4", "-1"]
+					}],
+					[{
+						"round": "11",
+						"this_piece_type": "S",
+						"next_piece_type": "Z",
+						"this_piece_position": ["4", "-1"]
+					}],
+					[{
+						"round": "12",
+						"this_piece_type": "Z",
+						"next_piece_type": "T",
+						"this_piece_position": ["4", "-1"]
+					}],
+					[{
+						"round": "13",
+						"this_piece_type": "T",
+						"next_piece_type": "I",
+						"this_piece_position": ["4", "-1"]
+					}],
+					[{
+						"round": "14",
+						"this_piece_type": "I",
+						"next_piece_type": "J",
+						"this_piece_position": ["4", "-1"]
+					}],
+					[{
+						"round": "15",
+						"this_piece_type": "J",
+						"next_piece_type": "S",
+						"this_piece_position": ["4", "-1"]
+					}],
+					[{
+						"round": "16",
+						"this_piece_type": "S",
+						"next_piece_type": "L",
+						"this_piece_position": ["4", "-1"]
+					}],
+					[{
+						"round": "17",
+						"this_piece_type": "L",
+						"next_piece_type": "O",
+						"this_piece_position": ["4", "-1"]
+					}],
+					[{
+						"round": "18",
+						"this_piece_type": "O",
+						"next_piece_type": "I",
+						"this_piece_position": ["4", "-1"]
+					}],
+					[{
+						"round": "19",
+						"this_piece_type": "I",
+						"next_piece_type": "T",
+						"this_piece_position": ["4", "-1"]
+					}],
+					[{
+						"round": "20",
+						"this_piece_type": "T",
+						"next_piece_type": "Z",
+						"this_piece_position": ["4", "-1"]
+					}],
+					[{
+						"round": "21",
+						"this_piece_type": "Z",
+						"next_piece_type": "S",
+						"this_piece_position": ["4", "-1"]
+					}],
+					[{
+						"round": "22",
+						"this_piece_type": "S",
+						"next_piece_type": "I",
+						"this_piece_position": ["4", "-1"]
+					}]
+				]
+			}
+		}],
+		[]
+	]
 }
