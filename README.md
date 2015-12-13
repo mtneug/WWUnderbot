@@ -1,2 +1,3 @@
-# blockbattle
-A professional bot for the AI Block Battle competitions developed by professionals.
+# wwunderbot
+
+wwunderbot is a professional bot for the [AI Block Battle competitions](http://theaigames.com/competitions/ai-block-battle) developed by professionals.
