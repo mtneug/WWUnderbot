@@ -7,21 +7,46 @@
  * user guide available at https://docs.gradle.org/2.9/userguide/tutorial_java_projects.html
  */
 
-// Apply the java plugin to add support for Java
-apply plugin: 'java'
+buildscript {
+  repositories {
+    mavenCentral()
+  }
 
-// In this section you declare where to find the dependencies of your project
-repositories {
-  // Use 'jcenter' for resolving your dependencies.
-  // You can declare any Maven/Ivy/file repository here.
-  jcenter()
+  dependencies {
+    classpath 'com.palominolabs.gradle.task:gradle-git-clone-task:0.0.2'
+  }
 }
 
-// In this section you declare the dependencies for your production and test code
-dependencies {
-  // Declare the dependency for your favourite test framework you want to use in your tests.
-  // TestNG is also supported by the Gradle Test task. Just change the
-  // testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add
-  // 'test.useTestNG()' to your build script.
-  testCompile 'junit:junit:4.12'
+apply plugin: 'java'
+apply plugin: 'application'
+
+applicationName = 'WWUnderbot'
+mainClassName = 'com.theaigames.blockbattle.Blockbattle'
+version = '1.0'
+
+sourceCompatibility = 8
+
+task cloneBlockbattleEngineRepo(type: com.palominolabs.gradle.task.git.clone.GitCloneTask) {
+  dir = file("$buildDir/blockbattle-engine")
+  uri = 'https://github.com/theaigames/blockbattle-engine'
+  treeish = 'origin/master'
+  reset = true
+}
+
+task compileBlockbattleEngine(dependsOn: 'cloneBlockbattleEngineRepo', type: JavaCompile) {
+  source = fileTree(dir: "$buildDir/blockbattle-engine/src", include: '**/*.java')
+  classpath = files("$buildDir/blockbattle-engine/src")
+  destinationDir = file("$buildDir/classes/main")
+  dependencyCacheDir = file("$buildDir/classes/main")
+}
+
+classes.dependsOn compileBlockbattleEngine
+
+task run(overwrite: true, type: JavaExec) {
+  main = mainClassName
+  classpath = sourceSets.main.runtimeClasspath
+  args = [
+    'java -cp $buildDir/classes/main wwunderbot.Main',
+    'java -cp $buildDir/classes/main wwunderbot.Main'
+  ]
 }

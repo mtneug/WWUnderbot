@@ -1,4 +1,6 @@
-// Copyright 2015 theaigames.com (developers@theaigames.com)
+/*
+ * Copyright (c) 2015. WWUnderbot team
+ */
 
 //    Licensed under the Apache License, Version 2.0 (the "License");
 //    you may not use this file except in compliance with the License.
@@ -6,35 +8,28 @@
 
 //        http://www.apache.org/licenses/LICENSE-2.0
 
-//    Unless required by applicable law or agreed to in writing, software
-//    distributed under the License is distributed on an "AS IS" BASIS,
-//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//    See the License for the specific language governing permissions and
-//    limitations under the License.
-//
-//    For the full copyright and license information, please view the LICENSE
-//    file that was distributed with this source code.
+package wwunderbot;
 
-package wwunderbot.bot;
-
+import wwunderbot.bot.BotParser;
+import wwunderbot.bot.BotState;
 import wwunderbot.moves.MoveType;
 
 import java.util.*;
 
 /**
- * BotStarter class
+ * Main class
  * <p>
  * This class is where the main logic should be. Implement getMoves() to return
  * something better than random moves.
  *
  * @author Jim van Eeden <jim@starapple.nl>
  */
-public class BotStarter {
-  public BotStarter() {
+public class Main {
+  public Main() {
   }
 
   public static void main(String[] args) {
-    BotParser parser = new BotParser(new BotStarter());
+    BotParser parser = new BotParser(new Main());
     parser.run();
   }
 

@@ -17,6 +17,7 @@
 
 package wwunderbot.bot;
 
+import wwunderbot.Main;
 import wwunderbot.moves.MoveType;
 
 import java.util.ArrayList;
@@ -32,10 +33,10 @@ import java.util.Scanner;
  */
 public class BotParser {
   private final Scanner scan;
-  private final BotStarter bot;
+  private final Main bot;
   private BotState currentState;
 
-  public BotParser(BotStarter bot) {
+  public BotParser(Main bot) {
     this.scan = new Scanner(System.in);
     this.bot = bot;
     this.currentState = new BotState();
