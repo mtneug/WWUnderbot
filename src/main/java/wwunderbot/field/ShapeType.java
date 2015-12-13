@@ -11,20 +11,20 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//	
+//
 //    For the full copyright and license information, please view the LICENSE
 //    file that was distributed with this source code.
 
-package field;
+package wwunderbot.field;
 
 /**
  * ShapeType class
- * 
+ * <p>
  * Enum for all possible Shape types
- * 
+ *
  * @author Jim van Eeden <jim@starapple.nl>
  */
 
 public enum ShapeType {
-	I, J, L, O, S, T, Z, NONE;
+  I, J, L, O, S, T, Z, NONE;
 }

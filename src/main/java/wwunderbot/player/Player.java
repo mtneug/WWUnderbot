@@ -11,68 +11,65 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//	
+//
 //    For the full copyright and license information, please view the LICENSE
 //    file that was distributed with this source code.
 
-package player;
+package wwunderbot.player;
 
-import field.Field;
+import wwunderbot.field.Field;
 
 /**
  * Player class
- * 
- * Represents one of the players. Stores some
- * data about them.
- * 
+ * <p>
+ * Represents one of the players. Stores some data about them.
+ *
  * @author Jim van Eeden <jim@starapple.nl>
  */
-
 public class Player {
+  private Field field;
+  private String name;
+  private int points;
+  private int combo;
+  private int skips;
 
-	private Field field;
-	private String name;
-	private int points;
-	private int combo;
-	private int skips;
-	
-	public Player(String name) {
-		this.name = name;
-	}
-	
-	public void setField(Field field) {
-		this.field = field;
-	}
-	
-	public Field getField() {
-		return this.field;
-	}
-	
-	public String getName() {
-		return this.name;
-	}
-	
-	public void setPoints(int points) {
-		this.points = points;
-	}
-	
-	public int getPoints() {
-		return this.points;
-	}
-	
-	public void setCombo(int combo) {
-		this.combo = combo;
-	}
-	
-	public int getCombo() {
-		return this.combo;
-	}
+  public Player(String name) {
+    this.name = name;
+  }
 
-	public void setSkips(int skips) {
-		this.skips = skips;
-	}
-	
-	public int getSkips() {
-		return this.skips;
-	}
+  public Field getField() {
+    return this.field;
+  }
+
+  public void setField(Field field) {
+    this.field = field;
+  }
+
+  public String getName() {
+    return this.name;
+  }
+
+  public int getPoints() {
+    return this.points;
+  }
+
+  public void setPoints(int points) {
+    this.points = points;
+  }
+
+  public int getCombo() {
+    return this.combo;
+  }
+
+  public void setCombo(int combo) {
+    this.combo = combo;
+  }
+
+  public int getSkips() {
+    return this.skips;
+  }
+
+  public void setSkips(int skips) {
+    this.skips = skips;
+  }
 }

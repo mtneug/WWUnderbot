@@ -11,33 +11,32 @@
 //    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
-//	
+//
 //    For the full copyright and license information, please view the LICENSE
 //    file that was distributed with this source code.
 
-package field;
+package wwunderbot.field;
 
 /**
  * CellType class
- * 
- * Enum of all the possible Cell types
- * 
+ * <p>
+ * Enum of all the possible Cell types.
+ *
  * @author Jim van Eeden <jim@starapple.nl>
  */
-
 public enum CellType {
-	EMPTY(0), 
-	SHAPE(1),
-	BLOCK(2),
-	SOLID(3);
-	
-	private final int code;
-	
-	private CellType(int code) {
-		this.code = code;
-	}
-	
-	public int getCode() {
-		return this.code;
-	}
+  EMPTY(0),
+  SHAPE(1),
+  BLOCK(2),
+  SOLID(3);
+
+  private final int code;
+
+  CellType(int code) {
+    this.code = code;
+  }
+
+  public int getCode() {
+    return this.code;
+  }
 }
