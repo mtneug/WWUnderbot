@@ -17,7 +17,6 @@
 
 package wwunderbot.bot;
 
-import wwunderbot.Main;
 import wwunderbot.moves.MoveType;
 
 import java.util.ArrayList;
@@ -26,19 +25,21 @@ import java.util.Scanner;
 /**
  * BotParser class
  * <p>
- * Main class that will keep reading output from the engine. Will either update
+ * WWUnderbot class that will keep reading output from the engine. Will either update
  * the bot state or get actions.
  *
  * @author Jim van Eeden <jim@starapple.nl>
  */
 public class BotParser {
+
   private final Scanner scan;
-  private final Main bot;
+  private final WWUnderbot bot;
   private BotState currentState;
 
-  public BotParser(Main bot) {
+  public BotParser(WWUnderbot bot) {
     this.scan = new Scanner(System.in);
     this.bot = bot;
+    bot.setState(this.currentState);
     this.currentState = new BotState();
   }
 
