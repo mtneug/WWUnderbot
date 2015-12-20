@@ -103,4 +103,54 @@ public class Field implements Cloneable{
   public void setGrid(Cell[][] grid) {
     this.grid = grid;
   }
+
+  /**
+   * Function to calculate the aggregated height of the current field. The aggregated height describes the summed up
+   * height of all columns.
+   * The height is determined as the difference between the ground of the field and the highest block in the column.
+   *
+   * More information can be found here:
+   *  <url>https://codemyroad.wordpress.com/2013/04/14/tetris-ai-the-near-perfect-player/</url>
+   *
+   * @return  int with the aggregated height of the grid.
+   */
+  public int getAggregateHeight() {
+    //  Create variable to capture position of the heighest block on the stack.
+    int heighestBlock;
+
+    //  Create and initialize variable for aggregated height (0 at beginning).
+    int height = 0;
+
+    //  Iterate over the grid column by column and calculate the heights.
+    for(int x = 0; x < this.width; x++) {
+
+      //  Initialize/Reset the variable for heighest block position - (-1) taken as it is no valid position.
+      //  (allows easy checking whether the topmost block has been detected)
+      heighestBlock = -1;
+
+      for(int y = 0; y < this.height; y++) {
+
+        //  Check if a given grid cell represents is either solid or a block (contributes to the height).
+        if((grid[x][y].getState() == CellType.SOLID)
+            || (grid[x][y].getState() == CellType.BLOCK)){
+
+          // The first found cell determines the highest block in the current column and the position is stored.
+          heighestBlock = y;
+
+          //  Since we want to determine the height of the column, no further iterations are needed, since the height
+          //  is determined by the ground and the highest block.
+          y = this.height;
+        }
+      }
+
+      //  If a block is given in the column heighestBlock will be greater than 0 and height will have to be added
+      //  to the aggregate height.
+      if(heighestBlock >= 0) {
+        height = height + (this.height - heighestBlock);
+      }
+
+    }
+
+    return height;
+  }
 }
