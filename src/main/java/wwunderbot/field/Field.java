@@ -28,7 +28,7 @@ package wwunderbot.field;
 public class Field implements Cloneable{
   private int width;
   private int height;
-  private Cell grid[][];
+  private Cell[][] grid;
 
   public Field(int width, int height, String fieldString) {
     this.width = width;
@@ -40,7 +40,13 @@ public class Field implements Cloneable{
   @Override
   protected Object clone() throws CloneNotSupportedException {
     Field cloned = (Field) super.clone();
-    cloned.setGrid((Cell) cloned.getGrid().clone());
+    Cell[][] cloneShape = new Cell[this.width][this.height];
+    for(int x = 0; x < this.width; x++) {
+      for(int y = 0; y < this.height; y++) {
+        cloneShape[x][y] = (Cell) cloned.getGrid()[x][y].clone();
+      }
+    }
+    return cloned;
   }
 
   /**
