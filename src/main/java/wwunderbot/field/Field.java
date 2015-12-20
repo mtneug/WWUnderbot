@@ -25,7 +25,7 @@ package wwunderbot.field;
  *
  * @author Jim van Eeden <jim@starapple.nl>
  */
-public class Field {
+public class Field implements Cloneable{
   private int width;
   private int height;
   private Cell grid[][];
