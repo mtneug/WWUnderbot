@@ -27,7 +27,7 @@ import java.awt.*;
  *
  * @author Jim van Eeden <jim@starapple.nl>
  */
-public class Cell {
+public class Cell implements Cloneable {
   private Point location;
   private CellType state;
 
@@ -39,6 +39,14 @@ public class Cell {
   public Cell(int x, int y, CellType type) {
     this.location = new Point(x, y);
     this.state = type;
+  }
+
+  @Override
+  protected Object clone() throws CloneNotSupportedException {
+    Cell cloned = (Cell) super.clone();
+    cloned.setLocation((Point) cloned.getLocation().clone());
+    //cloned.setState((CellType) cloned.getState().clone());
+    return cloned;
   }
 
   public boolean isOutOfBoundaries(Field f) {
@@ -59,6 +67,14 @@ public class Cell {
       this.location = new Point();
 
     this.location.setLocation(x, y);
+  }
+
+  public void setLocation(Point point) {
+    this.location = point;
+  }
+
+  public void setState(CellType state) {
+    this.state = state;
   }
 
   public boolean isShape() {

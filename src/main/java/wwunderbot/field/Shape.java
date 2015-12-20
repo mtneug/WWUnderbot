@@ -28,7 +28,7 @@ import java.awt.*;
  *
  * @author Jim van Eeden <jim@starapple.nl>
  */
-public class Shape {
+public class Shape implements Cloneable {
   public ShapeType type;
   private Cell[][] shape; // 2-dimensional bounding box: a matrix that contains the block-cells of the shape
   private Cell[] blocks; // array that contains only the block-cells of the shape
@@ -54,6 +54,28 @@ public class Shape {
 
     setShape();
     setBlockLocations();
+  }
+
+
+  @Override
+  protected Object clone() throws CloneNotSupportedException {
+    Shape cloned = (Shape) super.clone();
+    //cloned.setType((ShapeType) cloned.getType().clone());
+    Cell[][] cloneShape = new Cell[size][size];
+    for(int x = 0; x < size; x++) {
+      for(int y = 0; y < size; y++) {
+        cloneShape[x][y] = (Cell) cloned.getShape()[x][y].clone();
+      }
+    }
+    cloned.setShape(cloneShape);
+    Cell[] cloneBlocks = new Cell[4];
+    for(int x = 0; x < size; x++) {
+      cloneBlocks[x] = (Cell) cloned.getBlocks()[x].clone();
+    }
+    cloned.setBlocks(cloneBlocks);
+    cloned.setLocation((Point) cloned.getLocation().clone());
+    cloned.setField((Field) cloned.getField().clone());
+    return cloned;
   }
 
   // ACTIONS (no checks for errors are performed in the actions!)
@@ -236,11 +258,31 @@ public class Shape {
     return this.type;
   }
 
+  public void setType(ShapeType type) {
+    this.type = type;
+  }
+
   public Field getField() {
     return field;
   }
 
   public void setField(Field field) {
     this.field = field;
+  }
+
+  public Cell[][] getShape() {
+    return shape;
+  }
+
+  public void setShape(Cell[][] shape) {
+    this.shape = shape;
+  }
+
+  public void setBlocks(Cell[] blocks) {
+    this.blocks = blocks;
+  }
+
+  public void setLocation(Point location) {
+    this.location = location;
   }
 }
