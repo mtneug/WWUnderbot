@@ -28,7 +28,7 @@ version = '1.0'
 
 task cloneBlockbattleEngineRepo(type: com.palominolabs.gradle.task.git.clone.GitCloneTask) {
   dir = file("$buildDir/blockbattle-engine")
-  uri = 'https://github.com/theaigames/blockbattle-engine'
+  uri = 'https://github.com/mtneug/blockbattle-engine'
   treeish = 'origin/master'
   reset = true
 }
