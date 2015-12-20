@@ -33,7 +33,7 @@ public class Shape {
   private Cell[][] shape; // 2-dimensional bounding box: a matrix that contains the block-cells of the shape
   private Cell[] blocks; // array that contains only the block-cells of the shape
   private int size;
-  private Point location;
+  private Point location; // Upper left position of the cell in the field
   private Field field;
 
   public Shape(ShapeType type, Field field, Point location) {
@@ -41,6 +41,16 @@ public class Shape {
     this.field = field;
     this.blocks = new Cell[4];
     this.location = location;
+
+    setShape();
+    setBlockLocations();
+  }
+
+  public Shape(Shape shape){
+    this.type = shape.getType();
+    this.field = shape.getField();
+    this.blocks = new Cell[4];
+    this.location = shape.getLocation();
 
     setShape();
     setBlockLocations();
@@ -121,6 +131,7 @@ public class Shape {
   /**
    * Set shape in square box. Creates new Cells that can be checked against the
    * actual playing field.
+   *  shape[y][x]
    */
   private void setShape() {
     switch (this.type) {
@@ -223,5 +234,13 @@ public class Shape {
 
   public ShapeType getType() {
     return this.type;
+  }
+
+  public Field getField() {
+    return field;
+  }
+
+  public void setField(Field field) {
+    this.field = field;
   }
 }

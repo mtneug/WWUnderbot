@@ -10,6 +10,7 @@
 
 package wwunderbot.bot;
 
+import wwunderbot.field.Shape;
 import wwunderbot.geneticAlgorithm.Genome;
 import wwunderbot.moves.MoveType;
 
@@ -53,6 +54,27 @@ public class WWUnderbot {
   }
 
   public void findBestMove() {
+    //Create Shape
+    Shape currentShape = new Shape(state.getCurrentShapeType(), state.getMyField(), state.getShapeLocation());
+
+    //Try all possible rotations
+    Shape copy_currentShape = new Shape(currentShape);
+
+    //Initialize position of current shape at top left
+    copy_currentShape.oneLeft();
+    while(state.getMyField().isValid(copy_currentShape)){
+
+    }
+
+    while(state.getMyField().isValid(copy_currentShape)) {
+      Shape copy2_currentShape = new Shape(copy_currentShape);
+      while(state.getMyField().isValid(copy_currentShape)) {
+        copy2_currentShape.oneDown();
+      }
+    }
+    for(int rotate = 0; rotate < 4; rotate++) {
+
+    }
 
   }
 

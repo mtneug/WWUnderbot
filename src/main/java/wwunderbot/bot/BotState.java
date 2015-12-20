@@ -37,8 +37,8 @@ public class BotState {
   private int timebank;
   private HashMap<String, Player> players;
   private Player myBot;
-  private ShapeType currentShape;
-  private ShapeType nextShape;
+  private ShapeType currentShapeType;
+  private ShapeType nextShapeType;
   private Point shapeLocation;
 
   private int MAX_TIMEBANK;
@@ -170,12 +170,12 @@ public class BotState {
     return getOpponent().getField();
   }
 
-  public ShapeType getCurrentShape() {
-    return this.currentShape;
+  public ShapeType getCurrentShapeType() {
+    return this.currentShapeType;
   }
 
-  public ShapeType getNextShape() {
-    return this.nextShape;
+  public ShapeType getNextShapeType() {
+    return this.nextShapeType;
   }
 
   public Point getShapeLocation() {
