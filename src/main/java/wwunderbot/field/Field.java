@@ -36,6 +36,12 @@ public class Field implements Cloneable{
 
     parse(fieldString);
   }
+  
+  @Override
+  protected Object clone() throws CloneNotSupportedException {
+    Field cloned = (Field) super.clone();
+    cloned.setGrid((Cell) cloned.getGrid().clone());
+  }
 
   /**
    * Parses the input string to get a grid with Cell objects
@@ -82,5 +88,13 @@ public class Field implements Cloneable{
       };
     }
     return true;
+  }
+
+  public Cell[][] getGrid() {
+    return grid;
+  }
+
+  public void setGrid(Cell[][] grid) {
+    this.grid = grid;
   }
 }
