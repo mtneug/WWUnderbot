@@ -72,4 +72,15 @@ public class Field {
   public int getWidth() {
     return this.width;
   }
+
+  public boolean isValid(Shape shape) {
+    Cell[] blocks = shape.getBlocks();
+
+    for(Cell block : blocks) {
+      if(block.hasCollision(this)) {
+        return false;
+      };
+    }
+    return true;
+  }
 }
