@@ -76,14 +76,14 @@ public class WWUnderbot {
         }
         copy2_currentShape.oneUp();
 
-        
+
 
         copy_currentShape.oneRight();
       }
     }
 
     while(state.getMyField().isValid(copy_currentShape)) {
-      Shape copy2_currentShape = new Shape(copy_currentShape);
+      Shape copy2_currentShape = copy_currentShape.clone();
       while(state.getMyField().isValid(copy_currentShape)) {
         copy2_currentShape.oneDown();
       }

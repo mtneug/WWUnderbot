@@ -114,12 +114,12 @@ public class BotState {
 
       // update game this_piece_type s: The type of the piece that has just spawned on the field
       case "this_piece_type":
-        this.currentShape = ShapeType.valueOf(value);
+        this.currentShapeType = ShapeType.valueOf(value);
         break;
 
       // update game next_piece_type s: The type of the piece that will spawn the next round
       case "next_piece_type":
-        this.nextShape = ShapeType.valueOf(value);
+        this.nextShapeType = ShapeType.valueOf(value);
         break;
 
       // update b row_points i: The amount of row points the given player has scored so far
