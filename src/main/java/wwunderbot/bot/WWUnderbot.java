@@ -53,17 +53,33 @@ public class WWUnderbot {
     return moves;
   }
 
-  public void findBestMove() {
+  public void findBestMove() throws CloneNotSupportedException {
     //Create Shape
     Shape currentShape = new Shape(state.getCurrentShapeType(), state.getMyField(), state.getShapeLocation());
 
     //Try all possible rotations
-    Shape copy_currentShape = new Shape(currentShape);
+    Shape copy_currentShape = currentShape.clone();
 
-    //Initialize position of current shape at top left
-    copy_currentShape.oneLeft();
-    while(state.getMyField().isValid(copy_currentShape)){
+    for(int i = 0; i < 3; i++){
+      copy_currentShape.turnRight();
 
+      //Initialize position of current shape at top left
+      while(state.getMyField().isValid(copy_currentShape)) {
+        copy_currentShape.oneLeft();
+      }
+      copy_currentShape.oneRight();
+
+      while(state.getMyField().isValid(copy_currentShape)) {
+        Shape copy2_currentShape = copy_currentShape.clone();
+        while(state.getMyField().isValid(copy_currentShape)) {
+          copy2_currentShape.oneDown();
+        }
+        copy2_currentShape.oneUp();
+
+        
+
+        copy_currentShape.oneRight();
+      }
     }
 
     while(state.getMyField().isValid(copy_currentShape)) {

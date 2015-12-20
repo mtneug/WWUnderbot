@@ -46,19 +46,9 @@ public class Shape implements Cloneable {
     setBlockLocations();
   }
 
-  public Shape(Shape shape){
-    this.type = shape.getType();
-    this.field = shape.getField();
-    this.blocks = new Cell[4];
-    this.location = shape.getLocation();
-
-    setShape();
-    setBlockLocations();
-  }
-
 
   @Override
-  protected Object clone() throws CloneNotSupportedException {
+  public Shape clone() throws CloneNotSupportedException {
     Shape cloned = (Shape) super.clone();
     //cloned.setType((ShapeType) cloned.getType().clone());
     Cell[][] cloneShape = new Cell[size][size];
@@ -108,6 +98,11 @@ public class Shape implements Cloneable {
 
   public void oneDown() {
     this.location.y++;
+    this.setBlockLocations();
+  }
+
+  public void oneUp() {
+    this.location.y--;
     this.setBlockLocations();
   }
 
