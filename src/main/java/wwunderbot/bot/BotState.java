@@ -40,6 +40,7 @@ public class BotState {
   private ShapeType currentShapeType;
   private ShapeType nextShapeType;
   private Point shapeLocation;
+  private AssessField assessField;
 
   private int MAX_TIMEBANK;
   private int TIME_PER_MOVE;
@@ -140,6 +141,7 @@ public class BotState {
       // update b field [[c,...];...]: The complete playing field of the given player
       case "field":
         this.players.get(player).setField(new Field(this.FIELD_WIDTH, this.FIELD_HEIGHT, value));
+        this.assessField = new AssessField(this.players.get(player).getField());
         break;
 
       // update game this_piece_position i,i: The starting position in the field for

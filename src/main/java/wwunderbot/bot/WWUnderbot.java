@@ -42,13 +42,6 @@ public class WWUnderbot {
    */
   public ArrayList<MoveType> getMoves(BotState state, long timeout) {
     ArrayList<MoveType> moves = new ArrayList<MoveType>();
-    Random rnd = new Random();
-
-    int nrOfMoves = rnd.nextInt(41);
-    List<MoveType> allMoves = Collections.unmodifiableList(Arrays.asList(MoveType.values()));
-    for (int n = 0; n <= nrOfMoves; n++) {
-      moves.add(allMoves.get(rnd.nextInt(allMoves.size())));
-    }
 
     return moves;
   }
@@ -63,7 +56,7 @@ public class WWUnderbot {
     for(int i = 0; i < 3; i++){
       copy_currentShape.turnRight();
 
-      //Initialize position of current shape at top left
+      //Initialize position of current shape at top left corner
       while(state.getMyField().isValid(copy_currentShape)) {
         copy_currentShape.oneLeft();
       }
