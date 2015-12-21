@@ -44,8 +44,8 @@ public class Cell implements Cloneable {
   @Override
   protected Object clone() throws CloneNotSupportedException {
     Cell cloned = (Cell) super.clone();
-    cloned.setLocation((Point) cloned.getLocation().clone());
-    //cloned.setState((CellType) cloned.getState().clone());
+    if(cloned.getLocation() != null)
+      cloned.setLocation((Point) cloned.getLocation().clone());
     return cloned;
   }
 

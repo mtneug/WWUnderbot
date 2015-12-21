@@ -144,9 +144,9 @@ public class Shape implements Cloneable {
   private void setBlockLocations() {
     for (int y = 0; y < size; y++) {
       for (int x = 0; x < size; x++) {
-        if (shape[x][y].isShape()) {
+        //if (shape[x][y].isShape()) {
           shape[x][y].setLocation(location.x + x, location.y + y);
-        }
+        //}
       }
     }
   }

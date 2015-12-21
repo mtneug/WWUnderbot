@@ -39,8 +39,8 @@ public class BotParser {
   public BotParser(WWUnderbot bot) {
     this.scan = new Scanner(System.in);
     this.bot = bot;
-    bot.setState(this.currentState);
     this.currentState = new BotState();
+    bot.setState(this.currentState);
   }
 
   public void run() {

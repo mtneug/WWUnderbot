@@ -101,7 +101,6 @@ public class Field implements Cloneable {
       if (block.hasCollision(this)) {
         return false;
       }
-      ;
     }
     return true;
   }
