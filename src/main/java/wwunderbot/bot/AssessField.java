@@ -8,9 +8,6 @@ import wwunderbot.field.Cell;
 import wwunderbot.field.CellType;
 import wwunderbot.field.Field;
 
-/**
- * Created by frederikelischberger on 21/12/15.
- */
 public class AssessField {
 
   private Field field;
@@ -40,7 +37,6 @@ public class AssessField {
     //  Create and initialize variables for aggregated height and hole count (0 at beginning).
     int height = 0;
 
-
     //  Iterate over the grid column by column and calculate the heights.
     for(int x = 0; x < this.width; x++) {
       int columnHeight = heightOfColumn(x);
@@ -51,6 +47,7 @@ public class AssessField {
     return height;
   }
 
+  // Calculate for every column separately the number of holes by counting every empty cell after a Block.
   private int getHoles() {
     int holes  = 0;
     boolean closed = false;
@@ -68,7 +65,7 @@ public class AssessField {
   }
 
   // Start for every row at the very left and check every cell if it is a Block and add one to x until it reaches the
-  // end of the field. By that one complete Line is found
+  // end of the field. By that one complete Line is found.
   private int getCompleteness() {
     int completeLines = 0;
     for(int y = 0; y < this.height; y++) {
@@ -83,6 +80,7 @@ public class AssessField {
     return completeLines;
   }
 
+  // Calculate Bumpiness by adding all absolute differences between neighbored columns.
   private int getBumpiness() {
     int bumpiness = 0;
     for(int x = 0; x < field.getWidth() - 1; x++) {
@@ -91,6 +89,7 @@ public class AssessField {
     return bumpiness;
   }
 
+  // Calculates the height of a given column x.
   private int heightOfColumn(int x) {
     int y = 0;
     if(x < field.getWidth()) {
@@ -101,6 +100,7 @@ public class AssessField {
     }
   }
 
+  // Function for executing all methods (in the right order).
   public int[] assessField() {
     int height = getAggregateHeight();
     int holes = getHoles();
