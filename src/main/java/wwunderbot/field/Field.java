@@ -112,14 +112,15 @@ public class Field implements Cloneable{
    * More information can be found here:
    *  <url>https://codemyroad.wordpress.com/2013/04/14/tetris-ai-the-near-perfect-player/</url>
    *
-   * @return  int with the aggregated height of the grid.
+   * @return  int[2] containing the aggregated height of the grid and the number of holes in it.
    */
-  public int getAggregateHeight() {
+  public int[] getAggregateHeightAndHoles() {
     //  Create variable to capture position of the heighest block on the stack.
     int heighestBlock;
 
-    //  Create and initialize variable for aggregated height (0 at beginning).
+    //  Create and initialize variables for aggregated height and hole count (0 at beginning).
     int height = 0;
+    int holes  = 0;
 
     //  Iterate over the grid column by column and calculate the heights.
     for(int x = 0; x < this.width; x++) {
@@ -137,9 +138,10 @@ public class Field implements Cloneable{
           // The first found cell determines the highest block in the current column and the position is stored.
           heighestBlock = y;
 
-          //  Since we want to determine the height of the column, no further iterations are needed, since the height
-          //  is determined by the ground and the highest block.
-          y = this.height;
+        } else if ((grid[x][y].getState() == CellType.EMPTY) && (heighestBlock >= 0)) {
+
+          //  As soon as one block has been found every empty cell below can be counted as a hole.
+          holes++;
         }
       }
 
@@ -151,6 +153,9 @@ public class Field implements Cloneable{
 
     }
 
-    return height;
+    //  Create an array containing the aggregated height and the number of holes.
+    int[] heightHoles = {height, holes};
+
+    return heightHoles;
   }
 }
