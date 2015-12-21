@@ -17,12 +17,14 @@ public class AssessField {
   private Cell[][] grid;
   private int width;
   private int height;
+  private int[] columnHeights;
 
   public AssessField(Field field){
     this.field = field;
     this.grid = field.getGrid();
     this.width = field.getWidth();
     this.height = field.getHeight();
+    this.columnHeights = new int[this.width];
   }
   /**
    * Function to calculate the aggregated height of the current field. The aggregated height describes the summed up
@@ -32,21 +34,24 @@ public class AssessField {
    * More information can be found here:
    *  <url>https://codemyroad.wordpress.com/2013/04/14/tetris-ai-the-near-perfect-player/</url>
    *
-   * @return  int[2] containing the aggregated height of the grid and the number of holes in it.
+   * @return  int containing the aggregated height of the grid and the number of holes in it.
    */
-  public int getAggregateHeightAndHoles() {
+  private int getAggregateHeight() {
     //  Create and initialize variables for aggregated height and hole count (0 at beginning).
     int height = 0;
 
+
     //  Iterate over the grid column by column and calculate the heights.
     for(int x = 0; x < this.width; x++) {
-      height = height + heightOfColumn(x);
+      int columnHeight = heightOfColumn(x);
+      height = height + columnHeight;
+      this.columnHeights[x] = columnHeight;
     }
 
     return height;
   }
 
-  public int getHoles() {
+  private int getHoles() {
     int holes  = 0;
     boolean closed = false;
     for(int x = 0; x < field.getWidth(); x++){
@@ -64,9 +69,9 @@ public class AssessField {
 
   // Start for every row at the very left and check every cell if it is a Block and add one to x until it reaches the
   // end of the field. By that one complete Line is found
-  public int getCompleteness() {
+  private int getCompleteness() {
     int completeLines = 0;
-    for(int y = 0; y < this.width; y++) {
+    for(int y = 0; y < this.height; y++) {
       int x = 0;
       while(grid[x][y].getState() == CellType.BLOCK && x < this.width) {
         x++;
@@ -78,15 +83,15 @@ public class AssessField {
     return completeLines;
   }
 
-  public int getBumpiness() {
+  private int getBumpiness() {
     int bumpiness = 0;
     for(int x = 0; x < field.getWidth() - 1; x++) {
-      bumpiness = bumpiness + Math.abs(heightOfColumn(x) - heightOfColumn(x + 1));
+      bumpiness = bumpiness + Math.abs(columnHeights[x] - columnHeights[x + 1]);
     }
     return bumpiness;
   }
 
-  public int heightOfColumn(int x) {
+  private int heightOfColumn(int x) {
     int y = 0;
     if(x < field.getWidth()) {
       while(grid[x][y].getState() == CellType.EMPTY) {
@@ -96,6 +101,14 @@ public class AssessField {
     }
   }
 
+  public int[] assessField() {
+    int height = getAggregateHeight();
+    int holes = getHoles();
+    int completeness = getCompleteness();
+    int bumpiness = getBumpiness();
+
+    return new int[]{height, holes, completeness, bumpiness}
+  }
 }
 
 }
