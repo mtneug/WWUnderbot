@@ -187,4 +187,12 @@ public class BotState {
   public int getRound() {
     return this.round;
   }
+
+  public AssessField getAssessField() {
+    return assessField;
+  }
+
+  public void setAssessField(AssessField assessField) {
+    this.assessField = assessField;
+  }
 }

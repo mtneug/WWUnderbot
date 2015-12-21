@@ -48,6 +48,8 @@ public class WWUnderbot {
   }
 
   public void findBestMove() throws CloneNotSupportedException {
+    double bestScore = 0;
+
     //Create Shape
     Shape currentShape = new Shape(state.getCurrentShapeType(), state.getMyField(), state.getShapeLocation());
 
@@ -70,8 +72,11 @@ public class WWUnderbot {
         }
         copy2_currentShape.oneUp();
 
-        Field copy_field = state.getMyField().clone();
+        Field copy_field = (Field) state.getMyField().clone();
         copy_field.addShape(copy2_currentShape);
+
+        double score = 0;
+        score = calculateScore();
 
         copy_currentShape.oneRight();
       }
@@ -95,5 +100,17 @@ public class WWUnderbot {
 
   public void setState(BotState state) {
     this.state = state;
+  }
+
+  private double calculateScore() {
+    int height = state.getAssessField().assessField()[0];
+    int holes = state.getAssessField().assessField()[1];
+    int completeness = state.getAssessField().assessField()[2];
+    int bumpiness = state.getAssessField().assessField()[3]
+
+    return - genome.getHeightWeight() * height
+           + genome.getHolesWeight() * holes
+           - genome.getCompleteness() * completeness
+           - genome.getBumpinessWeight() * bumpiness;
   }
 }

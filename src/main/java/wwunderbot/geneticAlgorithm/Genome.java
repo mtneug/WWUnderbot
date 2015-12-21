@@ -10,13 +10,13 @@ package wwunderbot.geneticAlgorithm;
 public class Genome {
 
   private double heightWeight;
-  private double linesWeight;
+  private double completeness;
   private double holesWeight;
   private double bumpinessWeight;
 
-  public Genome(double heightWeight, double linesWeight, double holesWeight, double bumpinessWeight) {
+  public Genome(double heightWeight, double completeness, double holesWeight, double bumpinessWeight) {
     this.heightWeight = heightWeight;
-    this.linesWeight = linesWeight;
+    this.completeness = completeness;
     this.holesWeight = holesWeight;
     this.bumpinessWeight = bumpinessWeight;
   }
@@ -37,12 +37,12 @@ public class Genome {
     this.heightWeight = heightWeight;
   }
 
-  public double getLinesWeight() {
-    return linesWeight;
+  public double getCompleteness() {
+    return completeness;
   }
 
-  public void setLinesWeight(double linesWeight) {
-    this.linesWeight = linesWeight;
+  public void setCompleteness(double completeness) {
+    this.completeness = completeness;
   }
 
   public double getHolesWeight() {

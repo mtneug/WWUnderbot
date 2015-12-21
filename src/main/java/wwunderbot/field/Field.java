@@ -25,7 +25,7 @@ package wwunderbot.field;
  *
  * @author Jim van Eeden <jim@starapple.nl>
  */
-public class Field implements Cloneable{
+public class Field implements Cloneable {
   private int width;
   private int height;
   private Cell[][] grid;
@@ -36,13 +36,13 @@ public class Field implements Cloneable{
 
     parse(fieldString);
   }
-  
+
   @Override
-  protected Object clone() throws CloneNotSupportedException {
+  public Object clone() throws CloneNotSupportedException {
     Field cloned = (Field) super.clone();
     Cell[][] cloneShape = new Cell[this.width][this.height];
-    for(int x = 0; x < this.width; x++) {
-      for(int y = 0; y < this.height; y++) {
+    for (int x = 0; x < this.width; x++) {
+      for (int y = 0; y < this.height; y++) {
         cloneShape[x][y] = (Cell) cloned.getGrid()[x][y].clone();
       }
     }
@@ -71,13 +71,13 @@ public class Field implements Cloneable{
   }
 
   public void addShape(Shape shape) {
-    for(int i = 0; i < shape.getSize(); i++) {
+    for (int i = 0; i < shape.getBlocks().length; i++) {
       int x_block = shape.getBlocks()[i].getLocation().x;
       int y_block = shape.getBlocks()[i].getLocation().y;
       this.getCell(x_block, y_block).setState(CellType.BLOCK);
     }
   }
-  }
+
 
   public Cell getCell(int x, int y) {
     if (x < 0 || x >= this.width || y < 0 || y >= this.height)
@@ -97,10 +97,11 @@ public class Field implements Cloneable{
   public boolean isValid(Shape shape) {
     Cell[] blocks = shape.getBlocks();
 
-    for(Cell block : blocks) {
-      if(block.hasCollision(this)) {
+    for (Cell block : blocks) {
+      if (block.hasCollision(this)) {
         return false;
-      };
+      }
+      ;
     }
     return true;
   }
@@ -112,3 +113,4 @@ public class Field implements Cloneable{
   public void setGrid(Cell[][] grid) {
     this.grid = grid;
   }
+}

@@ -96,8 +96,8 @@ public class AssessField {
       while(grid[x][y].getState() == CellType.EMPTY) {
         y++;
       }
-      return (this.height - y);
     }
+    return (this.height - y);
   }
 
   // Function for executing all methods (in the right order).
@@ -107,8 +107,6 @@ public class AssessField {
     int completeness = getCompleteness();
     int bumpiness = getBumpiness();
 
-    return new int[]{height, holes, completeness, bumpiness}
+    return new int[]{height, holes, completeness, bumpiness};
   }
-}
-
 }
