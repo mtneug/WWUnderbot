@@ -17,7 +17,10 @@
 
 package wwunderbot.field;
 
+import wwunderbot.moves.MoveType;
+
 import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * Shape class
@@ -35,12 +38,15 @@ public class Shape implements Cloneable {
   private int size;
   private Point location; // Upper left position of the cell in the field
   private Field field;
+  private ArrayList<MoveType> moves;
+  private double score = 0;
 
   public Shape(ShapeType type, Field field, Point location) {
     this.type = type;
     this.field = field;
     this.blocks = new Cell[4];
     this.location = location;
+    this.moves = new ArrayList<MoveType>();
 
     setShape();
     setBlockLocations();
@@ -284,4 +290,20 @@ public class Shape implements Cloneable {
   public int getSize() { return size; }
 
   public void setSize(int size) { this.size = size; }
+
+  public ArrayList<MoveType> getMoves() {
+    return moves;
+  }
+
+  public void addMove(MoveType move) {
+    this.moves.add(move);
+  }
+
+  public double getScore() {
+    return score;
+  }
+
+  public void setScore(double score) {
+    this.score = score;
+  }
 }

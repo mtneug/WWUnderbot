@@ -62,6 +62,11 @@ public class BotParser {
           StringBuffer output = new StringBuffer();
           String moveJoin = "";
 
+          try {
+            bot.findBestMove(currentState.getMyField(), 0);
+          } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+          }
           ArrayList<MoveType> moves = bot.getMoves(currentState, Long.valueOf(parts[2]));
 
           if (moves.size() > 0)

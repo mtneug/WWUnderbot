@@ -47,11 +47,11 @@ public class WWUnderbot {
     return moves;
   }
 
-  public void findBestMove() throws CloneNotSupportedException {
+  public Shape findBestMove(Field field, int shapeIndex) throws CloneNotSupportedException {
     double bestScore = 0;
 
-    //Create Shape
-    Shape currentShape = new Shape(state.getCurrentShapeType(), state.getMyField(), state.getShapeLocation());
+    Shape currentShape = getWorkingShape(shapeIndex, field);
+    Shape bestShape = currentShape;
 
     //Try all possible rotations
     Shape copy_currentShape = currentShape.clone();
@@ -60,38 +60,38 @@ public class WWUnderbot {
       copy_currentShape.turnRight();
 
       //Initialize position of current shape at top left corner
-      while(state.getMyField().isValid(copy_currentShape)) {
+      while(field.isValid(copy_currentShape)) {
         copy_currentShape.oneLeft();
       }
       copy_currentShape.oneRight();
 
-      while(state.getMyField().isValid(copy_currentShape)) {
+      while(field.isValid(copy_currentShape)) {
         Shape copy2_currentShape = copy_currentShape.clone();
-        while(state.getMyField().isValid(copy_currentShape)) {
+        while(field.isValid(copy_currentShape)) {
           copy2_currentShape.oneDown();
         }
         copy2_currentShape.oneUp();
 
-        Field copy_field = (Field) state.getMyField().clone();
+        Field copy_field = (Field) field.clone();
         copy_field.addShape(copy2_currentShape);
 
         double score = 0;
-        score = calculateScore();
+        if(shapeIndex == 0) {
+          score = findBestMove(copy_field, shapeIndex + 1).getScore();
+        } else {
+          score = calculateScore();
+          copy_currentShape.setScore(score);
+        }
+
+        if(score > bestScore || bestScore == 0) {
+          bestScore = score;
+          bestShape = copy_currentShape;
+        }
 
         copy_currentShape.oneRight();
       }
     }
-
-    while(state.getMyField().isValid(copy_currentShape)) {
-      Shape copy2_currentShape = copy_currentShape.clone();
-      while(state.getMyField().isValid(copy_currentShape)) {
-        copy2_currentShape.oneDown();
-      }
-    }
-    for(int rotate = 0; rotate < 4; rotate++) {
-
-    }
-
+    return bestShape;
   }
 
   public BotState getState() {
@@ -106,11 +106,19 @@ public class WWUnderbot {
     int height = state.getAssessField().assessField()[0];
     int holes = state.getAssessField().assessField()[1];
     int completeness = state.getAssessField().assessField()[2];
-    int bumpiness = state.getAssessField().assessField()[3]
+    int bumpiness = state.getAssessField().assessField()[3];
 
     return - genome.getHeightWeight() * height
-           + genome.getHolesWeight() * holes
-           - genome.getCompleteness() * completeness
-           - genome.getBumpinessWeight() * bumpiness;
+      + genome.getHolesWeight() * holes
+      - genome.getCompleteness() * completeness
+      - genome.getBumpinessWeight() * bumpiness;
+  }
+
+  private Shape getWorkingShape(int i, Field field) {
+    if(i == 0) {
+      return new Shape(state.getCurrentShapeType(), field, state.getShapeLocation());
+    } else {
+      return new Shape(state.getNextShapeType(), field, state.getShapeLocation());
+    }
   }
 }
