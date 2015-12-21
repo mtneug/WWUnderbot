@@ -70,6 +70,15 @@ public class Field implements Cloneable{
     }
   }
 
+  public void addShape(Shape shape) {
+    for(int i = 0; i < shape.getSize(); i++) {
+      int x_block = shape.getBlocks()[i].getLocation().x;
+      int y_block = shape.getBlocks()[i].getLocation().y;
+      this.getCell(x_block, y_block).setState(CellType.BLOCK);
+    }
+  }
+  }
+
   public Cell getCell(int x, int y) {
     if (x < 0 || x >= this.width || y < 0 || y >= this.height)
       return null;

@@ -10,6 +10,7 @@
 
 package wwunderbot.bot;
 
+import wwunderbot.field.Field;
 import wwunderbot.field.Shape;
 import wwunderbot.geneticAlgorithm.Genome;
 import wwunderbot.moves.MoveType;
@@ -69,7 +70,8 @@ public class WWUnderbot {
         }
         copy2_currentShape.oneUp();
 
-
+        Field copy_field = state.getMyField().clone();
+        copy_field.addShape(copy2_currentShape);
 
         copy_currentShape.oneRight();
       }

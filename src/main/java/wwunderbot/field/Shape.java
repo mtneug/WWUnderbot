@@ -280,4 +280,12 @@ public class Shape implements Cloneable {
   public void setLocation(Point location) {
     this.location = location;
   }
+
+  public int getSize() {
+    return size;
+  }
+
+  public void setSize(int size) {
+    this.size = size;
+  }
 }
