@@ -50,3 +50,12 @@ task run(overwrite: true, type: JavaExec) {
     "java -cp $buildDir/classes/main wwunderbot.Main"
   ]
 }
+
+task debug(dependsOn: 'classes', type: JavaExec) {
+  main = 'com.theaigames.blockbattle.ThreadedBlockbattle'
+  classpath = sourceSets.main.runtimeClasspath
+  args = [
+    "wwunderbot.Main",
+    "wwunderbot.Main"
+  ]
+}
