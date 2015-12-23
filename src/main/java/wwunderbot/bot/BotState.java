@@ -17,9 +17,9 @@
 
 package wwunderbot.bot;
 
-import wwunderbot.field.Field;
-import wwunderbot.field.ShapeType;
-import wwunderbot.player.Player;
+import wwunderbot.models.grid.Shape;
+import wwunderbot.models.grid.ShapeType;
+import wwunderbot.models.player.Player;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -33,24 +33,20 @@ import java.util.Map;
  * @author Jim van Eeden <jim@starapple.nl>
  */
 public class BotState {
-  private int round;
+  private HashMap<String, Player> players = new HashMap<>();
+  private int round = 0;
   private int timebank;
-  private HashMap<String, Player> players;
   private Player myBot;
   private ShapeType currentShapeType;
   private ShapeType nextShapeType;
   private Point shapeLocation;
-  private AssessField assessField;
 
   private int MAX_TIMEBANK;
   private int TIME_PER_MOVE;
   private int FIELD_WIDTH;
   private int FIELD_HEIGHT;
-
-  public BotState() {
-    this.round = 0;
-    this.players = new HashMap<String, Player>();
-  }
+  private Shape currentShape;
+  private Shape nextShape;
 
   /**
    * Initially set all necessary variables of our objects
@@ -62,35 +58,34 @@ public class BotState {
     switch (key) {
       // settings timebank t: Maximum time in milliseconds that your bot can have in its time bank
       case "timebank":
-        this.MAX_TIMEBANK = Integer.parseInt(value);
+        MAX_TIMEBANK = Integer.parseInt(value);
         timebank = MAX_TIMEBANK;
         break;
 
       // settings time_per_move t: Time in milliseconds that is added to your bot's time bank each move
       case "time_per_move":
-        this.TIME_PER_MOVE = Integer.parseInt(value);
+        TIME_PER_MOVE = Integer.parseInt(value);
         break;
 
       // settings player_names [b,...]: A list of all player names in this match, including your bot's name
       case "player_names":
-        String[] playerNames = value.split(",");
-        for (String playerName : playerNames)
+        for (final String playerName : value.split(","))
           players.put(playerName, new Player(playerName));
         break;
 
       // settings your_bot b: The name of your bot for this match
       case "your_bot":
-        this.myBot = players.get(value);
+        myBot = players.get(value);
         break;
 
       // settings field_width i: The width of the field, i.e. number of row-cells
       case "field_width":
-        this.FIELD_WIDTH = Integer.parseInt(value);
+        FIELD_WIDTH = Integer.parseInt(value);
         break;
 
       // settings field_height i: The height of the field, i.e. number of column-cells
       case "field_height":
-        this.FIELD_HEIGHT = Integer.parseInt(value);
+        FIELD_HEIGHT = Integer.parseInt(value);
         break;
 
       default:
@@ -110,45 +105,44 @@ public class BotState {
     switch (key) {
       // update game round i: The number of the current round
       case "round":
-        this.round = Integer.parseInt(value);
+        round = Integer.parseInt(value);
         break;
 
       // update game this_piece_type s: The type of the piece that has just spawned on the field
       case "this_piece_type":
-        this.currentShapeType = ShapeType.valueOf(value);
+        currentShapeType = ShapeType.valueOf(value);
         break;
 
       // update game next_piece_type s: The type of the piece that will spawn the next round
       case "next_piece_type":
-        this.nextShapeType = ShapeType.valueOf(value);
+        nextShapeType = ShapeType.valueOf(value);
         break;
 
       // update b row_points i: The amount of row points the given player has scored so far
       case "row_points":
-        this.players.get(player).setPoints(Integer.parseInt(value));
+        players.get(player).setPoints(Integer.parseInt(value));
         break;
 
       // update b combo i: The height of the current combo for the given player
       case "combo":
-        this.players.get(player).setCombo(Integer.parseInt(value));
+        players.get(player).setCombo(Integer.parseInt(value));
         break;
 
       // update b skips i: The amount of skips the given player has available
       case "skips":
-        this.players.get(player).setSkips(Integer.parseInt(value));
+        players.get(player).setSkips(Integer.parseInt(value));
         break;
 
       // update b field [[c,...];...]: The complete playing field of the given player
       case "field":
-        this.players.get(player).setField(new Field(this.FIELD_WIDTH, this.FIELD_HEIGHT, value));
-        this.assessField = new AssessField(this.players.get(player).getField());
+        players.get(player).setField(new AssessableField(this.FIELD_WIDTH, this.FIELD_HEIGHT, value));
         break;
 
       // update game this_piece_position i,i: The starting position in the field for
       //                                      the current piece (top left corner of the piece bounding box)
       case "this_piece_position":
-        String[] split = value.split(",");
-        this.shapeLocation = new Point(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+        final String[] split = value.split(",");
+        shapeLocation = new Point(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
         break;
 
       default:
@@ -157,42 +151,47 @@ public class BotState {
     }
   }
 
+  public void initShapes() {
+    currentShape = new Shape(currentShapeType, getMyField(), shapeLocation);
+    nextShape = new Shape(nextShapeType, getMyField(), shapeLocation);
+  }
+
   public Player getOpponent() {
-    for (Map.Entry<String, Player> entry : this.players.entrySet())
-      if (entry.getKey() != this.myBot.getName())
+    for (Map.Entry<String, Player> entry : players.entrySet())
+      if (entry.getKey().equals(myBot.getName()))
         return entry.getValue();
     return null;
   }
 
-  public Field getMyField() {
-    return this.myBot.getField();
+  public AssessableField getMyField() {
+    return myBot.getField();
   }
 
-  public Field getOpponentField() {
+  public AssessableField getOpponentField() {
     return getOpponent().getField();
   }
 
   public ShapeType getCurrentShapeType() {
-    return this.currentShapeType;
+    return currentShapeType;
+  }
+
+  public Shape getCurrentShape() {
+    return currentShape;
   }
 
   public ShapeType getNextShapeType() {
-    return this.nextShapeType;
+    return nextShapeType;
+  }
+
+  public Shape getNextShape() {
+    return nextShape;
   }
 
   public Point getShapeLocation() {
-    return this.shapeLocation;
+    return shapeLocation;
   }
 
   public int getRound() {
-    return this.round;
-  }
-
-  public AssessField getAssessField() {
-    return assessField;
-  }
-
-  public void setAssessField(AssessField assessField) {
-    this.assessField = assessField;
+    return round;
   }
 }

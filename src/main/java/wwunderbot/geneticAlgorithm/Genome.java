@@ -5,18 +5,17 @@
 package wwunderbot.geneticAlgorithm;
 
 /**
- * Created by Marco on 20.12.2015.
+ * @author Alexander, Frederik, Marco, Matthias
  */
 public class Genome {
-
   private double heightWeight;
-  private double completeness;
+  private double completenessWeight;
   private double holesWeight;
   private double bumpinessWeight;
 
-  public Genome(double heightWeight, double completeness, double holesWeight, double bumpinessWeight) {
+  public Genome(double heightWeight, double completenessWeight, double holesWeight, double bumpinessWeight) {
     this.heightWeight = heightWeight;
-    this.completeness = completeness;
+    this.completenessWeight = completenessWeight;
     this.holesWeight = holesWeight;
     this.bumpinessWeight = bumpinessWeight;
   }
@@ -37,12 +36,12 @@ public class Genome {
     this.heightWeight = heightWeight;
   }
 
-  public double getCompleteness() {
-    return completeness;
+  public double getCompletenessWeight() {
+    return completenessWeight;
   }
 
-  public void setCompleteness(double completeness) {
-    this.completeness = completeness;
+  public void setCompletenessWeight(double completenessWeight) {
+    this.completenessWeight = completenessWeight;
   }
 
   public double getHolesWeight() {

@@ -15,9 +15,9 @@
 //    For the full copyright and license information, please view the LICENSE
 //    file that was distributed with this source code.
 
-package wwunderbot.player;
+package wwunderbot.models.player;
 
-import wwunderbot.field.Field;
+import wwunderbot.bot.AssessableField;
 
 /**
  * Player class
@@ -27,7 +27,7 @@ import wwunderbot.field.Field;
  * @author Jim van Eeden <jim@starapple.nl>
  */
 public class Player {
-  private Field field;
+  private AssessableField field;
   private String name;
   private int points;
   private int combo;
@@ -37,11 +37,11 @@ public class Player {
     this.name = name;
   }
 
-  public Field getField() {
+  public AssessableField getField() {
     return this.field;
   }
 
-  public void setField(Field field) {
+  public void setField(AssessableField field) {
     this.field = field;
   }
 

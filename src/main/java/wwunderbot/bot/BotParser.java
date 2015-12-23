@@ -17,10 +17,11 @@
 
 package wwunderbot.bot;
 
-import wwunderbot.moves.MoveType;
+import wwunderbot.models.moves.MoveType;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.StringJoiner;
 
 /**
  * BotParser class
@@ -31,55 +32,45 @@ import java.util.Scanner;
  * @author Jim van Eeden <jim@starapple.nl>
  */
 public class BotParser {
-
   private final Scanner scan;
   private final WWUnderbot bot;
   private BotState currentState;
 
-  public BotParser(WWUnderbot bot) {
+  public BotParser(final WWUnderbot bot) {
     this.scan = new Scanner(System.in);
     this.bot = bot;
     this.currentState = new BotState();
-    bot.setState(this.currentState);
   }
 
   public void run() {
     while (scan.hasNextLine()) {
-      String line = scan.nextLine().trim();
+      final String line = scan.nextLine().trim();
       if (line.length() == 0) continue;
-      String[] parts = line.split(" ");
 
+      final String[] parts = line.split(" ");
       switch (parts[0]) {
         case "settings":
-          this.currentState.updateSettings(parts[1], parts[2]);
+          currentState.updateSettings(parts[1], parts[2]);
           break;
 
         case "update":
-          this.currentState.updateState(parts[1], parts[2], parts[3]);
+          currentState.updateState(parts[1], parts[2], parts[3]);
           break;
 
         case "action":
-          StringBuffer output = new StringBuffer();
-          String moveJoin = "";
+          final Long timeout = Long.valueOf(parts[2]);
+          ArrayList<MoveType> moves = bot.getMoves(currentState, timeout);
 
-          try {
-            bot.findBestMove(currentState.getMyField(), 0);
-          } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-          }
-          ArrayList<MoveType> moves = bot.getMoves(currentState, Long.valueOf(parts[2]));
-
+          final StringJoiner output = new StringJoiner(",");
           if (moves.size() > 0)
-            for (MoveType move : moves) {
-              output.append(moveJoin);
-              output.append(move.toString());
-              moveJoin = ",";
-            }
+            for (final MoveType move : moves)
+              output.add(move.toString());
           else
-            output.append("no_moves");
+            output.add("no_moves");
 
-          System.out.println(output);
+          System.out.println(output.toString());
           System.out.flush();
+          System.err.println(output.toString());
           break;
 
         default:

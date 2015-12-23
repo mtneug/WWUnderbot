@@ -15,28 +15,16 @@
 //    For the full copyright and license information, please view the LICENSE
 //    file that was distributed with this source code.
 
-package wwunderbot.field;
+package wwunderbot.models.grid;
 
 /**
- * CellType class
+ * ShapeType class
  * <p>
- * Enum of all the possible Cell types.
+ * Enum for all possible Shape types
  *
  * @author Jim van Eeden <jim@starapple.nl>
  */
-public enum CellType {
-  EMPTY(0),
-  SHAPE(1),
-  BLOCK(2),
-  SOLID(3);
 
-  private final int code;
-
-  CellType(int code) {
-    this.code = code;
-  }
-
-  public int getCode() {
-    return this.code;
-  }
+public enum ShapeType {
+  I, J, L, O, S, T, Z, NONE;
 }

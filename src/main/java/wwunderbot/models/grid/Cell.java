@@ -15,7 +15,7 @@
 //    For the full copyright and license information, please view the LICENSE
 //    file that was distributed with this source code.
 
-package wwunderbot.field;
+package wwunderbot.models.grid;
 
 import java.awt.*;
 
@@ -32,72 +32,59 @@ public class Cell implements Cloneable {
   private CellType state;
 
   public Cell() {
-    this.location = null;
-    this.state = CellType.EMPTY;
+    this(null, CellType.EMPTY);
   }
 
-  public Cell(int x, int y, CellType type) {
-    this.location = new Point(x, y);
+  public Cell(final Point location, final CellType type) {
+    this.location = location;
     this.state = type;
   }
 
   @Override
-  protected Object clone() throws CloneNotSupportedException {
-    Cell cloned = (Cell) super.clone();
-    if(cloned.getLocation() != null)
-      cloned.setLocation((Point) cloned.getLocation().clone());
+  public Cell clone() {
+    Cell cloned;
+    try {
+      cloned = (Cell) super.clone();
+    } catch (CloneNotSupportedException e) {
+      // this shouldn't happen, since we are Cloneable
+      throw new InternalError(e);
+    }
+
+    if (cloned.location != null)
+      cloned.setLocation((Point) location.clone());
+
     return cloned;
   }
 
-  public boolean isOutOfBoundaries(Field f) {
-    return this.location.x >= f.getWidth() || this.location.x < 0 || this.location.y >= f.getHeight();
+  public boolean isShape() {
+    return state == CellType.SHAPE;
   }
 
-  public boolean hasCollision(Field f) {
-    Cell cell = f.getCell(this.location.x, this.location.y);
-    return cell != null && (this.state == CellType.SHAPE && (cell.isSolid() || cell.isBlock()));
+  public boolean isSolid() {
+    return state == CellType.SOLID;
   }
 
-  public void setShape() {
-    this.state = CellType.SHAPE;
+  public boolean isBlock() {
+    return state == CellType.BLOCK;
   }
 
-  public void setLocation(int x, int y) {
-    if (this.location == null)
-      this.location = new Point();
-
-    this.location.setLocation(x, y);
+  public boolean isEmpty() {
+    return state == CellType.EMPTY;
   }
 
-  public void setLocation(Point point) {
-    this.location = point;
+  public CellType getState() {
+    return state;
   }
 
   public void setState(CellType state) {
     this.state = state;
   }
 
-  public boolean isShape() {
-    return this.state == CellType.SHAPE;
-  }
-
-  public boolean isSolid() {
-    return this.state == CellType.SOLID;
-  }
-
-  public boolean isBlock() {
-    return this.state == CellType.BLOCK;
-  }
-
-  public boolean isEmpty() {
-    return this.state == CellType.EMPTY;
-  }
-
-  public CellType getState() {
-    return this.state;
-  }
-
   public Point getLocation() {
-    return this.location;
+    return location;
+  }
+
+  public void setLocation(Point point) {
+    this.location = point;
   }
 }

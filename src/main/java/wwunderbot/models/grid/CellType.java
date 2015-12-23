@@ -15,22 +15,28 @@
 //    For the full copyright and license information, please view the LICENSE
 //    file that was distributed with this source code.
 
-package wwunderbot.moves;
+package wwunderbot.models.grid;
 
 /**
- * MoveType class
+ * CellType class
  * <p>
- * Enum for all possible move types.
+ * Enum of all the possible Cell types.
  *
  * @author Jim van Eeden <jim@starapple.nl>
  */
+public enum CellType {
+  EMPTY(0),
+  SHAPE(1),
+  BLOCK(2),
+  SOLID(3);
 
-public enum MoveType {
-  DOWN, LEFT, RIGHT, TURNLEFT, TURNRIGHT;
-  // , DROP, SKIP;
+  private final int code;
 
-  @Override
-  public String toString() {
-    return this.name().toLowerCase();
+  CellType(int code) {
+    this.code = code;
+  }
+
+  public int getCode() {
+    return this.code;
   }
 }
