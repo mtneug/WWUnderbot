@@ -21,10 +21,10 @@ apply plugin: 'java'
 apply plugin: 'application'
 
 applicationName = 'WWUnderbot'
-mainClassName = 'com.theaigames.blockbattle.Blockbattle'
+mainClassName = 'com.theaigames.blockbattle.ThreadedBlockbattle'
 version = '1.0'
 
-//sourceCompatibility = 8
+sourceCompatibility = 8
 
 task cloneBlockbattleEngineRepo(type: com.palominolabs.gradle.task.git.clone.GitCloneTask) {
   dir = file("$buildDir/blockbattle-engine")
@@ -44,15 +44,6 @@ classes.dependsOn compileBlockbattleEngine
 
 task run(overwrite: true, type: JavaExec) {
   main = mainClassName
-  classpath = sourceSets.main.runtimeClasspath
-  args = [
-    "java -cp $buildDir/classes/main wwunderbot.Main",
-    "java -cp $buildDir/classes/main wwunderbot.Main"
-  ]
-}
-
-task debug(dependsOn: 'classes', type: JavaExec) {
-  main = 'com.theaigames.blockbattle.ThreadedBlockbattle'
   classpath = sourceSets.main.runtimeClasspath
   args = [
     "wwunderbot.Main",

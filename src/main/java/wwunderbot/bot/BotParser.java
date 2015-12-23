@@ -79,6 +79,7 @@ public class BotParser {
             output.append("no_moves");
 
           System.out.println(output);
+          System.out.flush();
           break;
 
         default:
