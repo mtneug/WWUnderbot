@@ -2,14 +2,19 @@
  * Copyright (c) 2015. WWUnderbot team
  */
 
-package wwunderbot;
+package de.uni_muenster.wi.wwunderbot;
 
-import wwunderbot.bot.BotParser;
-import wwunderbot.bot.WWUnderbot;
-import wwunderbot.geneticAlgorithm.Genome;
+import com.theaigames.blockbattle.bot.BotParser;
+import de.uni_muenster.wi.wwunderbot.bot.WWUnderbot;
+import de.uni_muenster.wi.wwunderbot.ga.Genome;
 
 /**
- * @author Alexander, Frederik, Marco, Matthias
+ * Main entry point.
+ *
+ * @author Alexander
+ * @author Frederik
+ * @author Marco
+ * @author Matthias
  */
 public class Main {
   public static void main(String[] args) {

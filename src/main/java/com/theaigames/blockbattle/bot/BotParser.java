@@ -1,42 +1,32 @@
-// Copyright 2015 theaigames.com (developers@theaigames.com)
+/*
+ * Copyright (c) 2015. WWUnderbot team
+ */
 
-//    Licensed under the Apache License, Version 2.0 (the "License");
-//    you may not use this file except in compliance with the License.
-//    You may obtain a copy of the License at
+package com.theaigames.blockbattle.bot;
 
-//        http://www.apache.org/licenses/LICENSE-2.0
-
-//    Unless required by applicable law or agreed to in writing, software
-//    distributed under the License is distributed on an "AS IS" BASIS,
-//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//    See the License for the specific language governing permissions and
-//    limitations under the License.
-//
-//    For the full copyright and license information, please view the LICENSE
-//    file that was distributed with this source code.
-
-package wwunderbot.bot;
-
-import wwunderbot.models.moves.MoveType;
+import com.theaigames.blockbattle.models.MoveType;
+import de.uni_muenster.wi.wwunderbot.bot.WWUnderbot;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.StringJoiner;
 
 /**
- * BotParser class
- * <p>
- * WWUnderbot class that will keep reading output from the engine. Will either update
+ * This class will keep reading output from the engine. It will either update
  * the bot state or get actions.
  *
  * @author Jim van Eeden <jim@starapple.nl>
+ * @author Alexander
+ * @author Frederik
+ * @author Marco
+ * @author Matthias
  */
 public class BotParser {
   private final Scanner scan;
-  private final WWUnderbot bot;
+  private final AbstractBot bot;
   private BotState currentState;
 
-  public BotParser(final WWUnderbot bot) {
+  public BotParser(final AbstractBot bot) {
     this.scan = new Scanner(System.in);
     this.bot = bot;
     this.currentState = new BotState();

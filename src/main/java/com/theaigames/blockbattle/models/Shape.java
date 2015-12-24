@@ -1,38 +1,28 @@
-// Copyright 2015 theaigames.com (developers@theaigames.com)
+/*
+ * Copyright (c) 2015. WWUnderbot team
+ */
 
-//    Licensed under the Apache License, Version 2.0 (the "License");
-//    you may not use this file except in compliance with the License.
-//    You may obtain a copy of the License at
+package com.theaigames.blockbattle.models;
 
-//        http://www.apache.org/licenses/LICENSE-2.0
+import de.uni_muenster.wi.wwunderbot.models.AssessableField;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-//    Unless required by applicable law or agreed to in writing, software
-//    distributed under the License is distributed on an "AS IS" BASIS,
-//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//    See the License for the specific language governing permissions and
-//    limitations under the License.
-//
-//    For the full copyright and license information, please view the LICENSE
-//    file that was distributed with this source code.
-
-package wwunderbot.models.grid;
-
-import wwunderbot.models.moves.MoveType;
-
-import java.awt.*;
 import java.util.ArrayList;
 
 /**
- * Shape class
- * <p>
  * Represents the shapes that appear in the field. Some basic methods have
  * already been implemented, but actual move actions, etc. should still be
  * created.
  *
  * @author Jim van Eeden <jim@starapple.nl>
+ * @author Alexander
+ * @author Frederik
+ * @author Marco
+ * @author Matthias
  */
 public class Shape implements Cloneable {
   public ShapeType type;
+
   /**
    * 2-dimensional bounding box: a matrix that contains the block-cells of the shape
    */
@@ -160,19 +150,17 @@ public class Shape implements Cloneable {
       throw new InternalError(e);
     }
 
-    cloned.location = (Point) location.clone();
+    cloned.location = location.clone();
     cloned.field = field.clone();
 
-    final Cell[][] cloneShape = new Cell[size][size];
-    cloned.shape = cloneShape;
+    cloned.shape = new Cell[size][size];
     for (int x = 0; x < size; x++)
       for (int y = 0; y < size; y++)
-        cloneShape[x][y] = shape[x][y].clone();
+        cloned.shape[x][y] = shape[x][y].clone();
 
-    final Cell[] cloneBlocks = new Cell[4];
-    cloned.blocks = cloneBlocks;
+    cloned.blocks = new Cell[4];
     for (int x = 0; x < size; x++)
-      cloneBlocks[x] = blocks[x].clone();
+      cloned.blocks [x] = blocks[x].clone();
 
     return cloned;
   }
@@ -220,6 +208,46 @@ public class Shape implements Cloneable {
   public void oneLeft() {
     location.x--;
     setBlockLocations();
+  }
+
+  public void moveToOrigin() {
+    switch (type) {
+      case I:
+        break;
+
+      case J:
+        break;
+
+      case L:
+        break;
+
+      case O:
+        break;
+
+      case S:
+        break;
+
+      case T:
+        break;
+
+      case Z:
+        break;
+    }
+    throw new NotImplementedException();
+  }
+
+  public boolean isRight(AssessableField field) {
+    throw new NotImplementedException();
+  }
+
+  public boolean isLeft(AssessableField field) {
+    throw new NotImplementedException();
+  }
+
+  public void drop(Field field) {
+    while (field.canBeAdded(this))
+      oneDown();
+    oneUp();
   }
 
   /**

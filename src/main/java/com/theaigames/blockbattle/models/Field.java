@@ -1,31 +1,18 @@
-// Copyright 2015 theaigames.com (developers@theaigames.com)
+/*
+ * Copyright (c) 2015. WWUnderbot team
+ */
 
-//    Licensed under the Apache License, Version 2.0 (the "License");
-//    you may not use this file except in compliance with the License.
-//    You may obtain a copy of the License at
-
-//        http://www.apache.org/licenses/LICENSE-2.0
-
-//    Unless required by applicable law or agreed to in writing, software
-//    distributed under the License is distributed on an "AS IS" BASIS,
-//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//    See the License for the specific language governing permissions and
-//    limitations under the License.
-//
-//    For the full copyright and license information, please view the LICENSE
-//    file that was distributed with this source code.
-
-package wwunderbot.models.grid;
-
-import java.awt.*;
+package com.theaigames.blockbattle.models;
 
 /**
- * Field class
- * <p>
  * Represents the playing field for one player. Has some basic methods already
  * implemented.
  *
  * @author Jim van Eeden <jim@starapple.nl>
+ * @author Alexander
+ * @author Frederik
+ * @author Marco
+ * @author Matthias
  */
 public class Field implements Cloneable {
   private final int width;
@@ -48,12 +35,10 @@ public class Field implements Cloneable {
       throw new InternalError(e);
     }
 
-    final Cell[][] cloneGrid = new Cell[width][height];
-    cloned.grid = cloneGrid;
-
+    cloned.grid = new Cell[width][height];
     for (int x = 0; x < width; x++)
       for (int y = 0; y < height; y++)
-        cloneGrid[x][y] = grid[x][y].clone();
+        cloned.grid[x][y] = grid[x][y].clone();
 
     return cloned;
   }
@@ -83,6 +68,13 @@ public class Field implements Cloneable {
     for (int i = 0; i < shape.getBlocks().length; i++) {
       final Point location = shape.getBlocks()[i].getLocation();
       getCell(location).setState(CellType.BLOCK);
+    }
+  }
+
+  public void removeShape(final Shape shape) {
+    for (int i = 0; i < shape.getBlocks().length; i++) {
+      final Point location = shape.getBlocks()[i].getLocation();
+      getCell(location).setState(CellType.EMPTY);
     }
   }
 
@@ -137,9 +129,5 @@ public class Field implements Cloneable {
 
   public int getWidth() {
     return width;
-  }
-
-  public Cell[][] getGrid() {
-    return grid;
   }
 }

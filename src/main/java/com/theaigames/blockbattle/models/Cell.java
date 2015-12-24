@@ -1,31 +1,17 @@
-// Copyright 2015 theaigames.com (developers@theaigames.com)
+/*
+ * Copyright (c) 2015. WWUnderbot team
+ */
 
-//    Licensed under the Apache License, Version 2.0 (the "License");
-//    you may not use this file except in compliance with the License.
-//    You may obtain a copy of the License at
-
-//        http://www.apache.org/licenses/LICENSE-2.0
-
-//    Unless required by applicable law or agreed to in writing, software
-//    distributed under the License is distributed on an "AS IS" BASIS,
-//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//    See the License for the specific language governing permissions and
-//    limitations under the License.
-//
-//    For the full copyright and license information, please view the LICENSE
-//    file that was distributed with this source code.
-
-package wwunderbot.models.grid;
-
-import java.awt.*;
+package com.theaigames.blockbattle.models;
 
 /**
- * Cell class
- * <p>
- * Represents one Cell in the playing field. Has some basic methods already
- * implemented.
+ * Represents one Cell in the playing field.
  *
  * @author Jim van Eeden <jim@starapple.nl>
+ * @author Alexander
+ * @author Frederik
+ * @author Marco
+ * @author Matthias
  */
 public class Cell implements Cloneable {
   private Point location;
@@ -51,7 +37,7 @@ public class Cell implements Cloneable {
     }
 
     if (cloned.location != null)
-      cloned.setLocation((Point) location.clone());
+      cloned.setLocation(location.clone());
 
     return cloned;
   }
@@ -76,7 +62,7 @@ public class Cell implements Cloneable {
     return state;
   }
 
-  public void setState(CellType state) {
+  void setState(CellType state) {
     this.state = state;
   }
 
@@ -84,7 +70,7 @@ public class Cell implements Cloneable {
     return location;
   }
 
-  public void setLocation(Point point) {
+  void setLocation(Point point) {
     this.location = point;
   }
 }

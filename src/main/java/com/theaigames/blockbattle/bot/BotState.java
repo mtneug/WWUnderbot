@@ -1,36 +1,26 @@
-// Copyright 2015 theaigames.com (developers@theaigames.com)
+/*
+ * Copyright (c) 2015. WWUnderbot team
+ */
 
-//    Licensed under the Apache License, Version 2.0 (the "License");
-//    you may not use this file except in compliance with the License.
-//    You may obtain a copy of the License at
+package com.theaigames.blockbattle.bot;
 
-//        http://www.apache.org/licenses/LICENSE-2.0
+import com.theaigames.blockbattle.models.Player;
+import com.theaigames.blockbattle.models.Point;
+import com.theaigames.blockbattle.models.Shape;
+import com.theaigames.blockbattle.models.ShapeType;
+import de.uni_muenster.wi.wwunderbot.models.AssessableField;
 
-//    Unless required by applicable law or agreed to in writing, software
-//    distributed under the License is distributed on an "AS IS" BASIS,
-//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//    See the License for the specific language governing permissions and
-//    limitations under the License.
-//
-//    For the full copyright and license information, please view the LICENSE
-//    file that was distributed with this source code.
-
-package wwunderbot.bot;
-
-import wwunderbot.models.grid.Shape;
-import wwunderbot.models.grid.ShapeType;
-import wwunderbot.models.player.Player;
-
-import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * BotState class
- * <p>
- * In this class all the information about the game is stored.
+ * Class to store all information about the game.
  *
  * @author Jim van Eeden <jim@starapple.nl>
+ * @author Alexander
+ * @author Frederik
+ * @author Marco
+ * @author Matthias
  */
 public class BotState {
   private HashMap<String, Player> players = new HashMap<>();

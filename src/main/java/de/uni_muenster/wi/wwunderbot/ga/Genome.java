@@ -2,9 +2,11 @@
  * Copyright (c) 2015. WWUnderbot team
  */
 
-package wwunderbot.geneticAlgorithm;
+package de.uni_muenster.wi.wwunderbot.ga;
 
 /**
+ * Representation of a Genome.
+ *
  * @author Alexander, Frederik, Marco, Matthias
  */
 public class Genome {
