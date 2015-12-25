@@ -6,7 +6,6 @@ package de.uni_muenster.wi.wwunderbot.bot;
 
 import com.theaigames.blockbattle.bot.AbstractBot;
 import com.theaigames.blockbattle.bot.BotState;
-import com.theaigames.blockbattle.models.Field;
 import com.theaigames.blockbattle.models.MoveType;
 import com.theaigames.blockbattle.models.Point;
 import com.theaigames.blockbattle.models.Shape;
@@ -24,8 +23,7 @@ import java.util.ArrayList;
  * @author Matthias
  */
 public class WWUnderbot extends AbstractBot {
-  private Genome genome;
-  private final Point topLeftLocation = new Point(0, 0);
+  private final Genome genome;
 
   public WWUnderbot(Genome genome) {
     this.genome = genome;
@@ -39,21 +37,22 @@ public class WWUnderbot extends AbstractBot {
    * @return a list of moves to execute
    */
   @Override
-  public ArrayList<MoveType> getMoves(BotState state, long timeout) {
+  public ArrayList<MoveType> getMoves(final BotState state, final long timeout) {
     state.initShapes();
-    Shape[] shapes = new Shape[]{
+    final Shape[] shapes = new Shape[]{
         state.getCurrentShape(),
         state.getNextShape()
     };
-    return findBestMoves(state.getMyField(), shapes, 0).getMoves(state.getCurrentShape().getLocation());
+    return findTargetShapeState(state.getMyField(), shapes, 0)
+        .getMoves(state.getCurrentShape().getLocation());
   }
 
-  private ShapeStateAssessment findBestMoves(AssessableField field, Shape[] shapes, int shapeIndex) {
+  private ShapeStateAssessment findTargetShapeState(final AssessableField field, final Shape[] shapes, final int shapeIndex) {
+    final Shape shape = shapes[shapeIndex];
+    final Point originalLocation = shape.getLocation().clone();
     boolean hasColumnsToAssess = true;
-    Shape shape = shapes[shapeIndex];
-    ShapeStateAssessment bestShapeStateAssessment = new ShapeStateAssessment(shape, 0, 0);
-    ShapeStateAssessment shapeStateAssessment;
-    Point originalLocation = shape.getLocation().clone();
+    ShapeStateAssessment bestShapeStateAssessment, shapeStateAssessment;
+    bestShapeStateAssessment = new ShapeStateAssessment(shape, 0);
 
     // Try all possible rotations
     for (int rotation = 0; rotation < 4; rotation++) {
@@ -70,10 +69,10 @@ public class WWUnderbot extends AbstractBot {
 
         // Calculate score of field assuming we add the shape to it
         field.addShape(shape);
-        if (shapeIndex == 0)
-          shapeStateAssessment = findBestMoves(field, shapes, shapeIndex + 1);
+        if (shapeIndex == shapes.length)
+          shapeStateAssessment = new ShapeStateAssessment(shape, calculateScore(field));
         else
-          shapeStateAssessment = new ShapeStateAssessment(shape, rotation, calculateScore(field));
+          shapeStateAssessment = findTargetShapeState(field, shapes, shapeIndex + 1);
         field.removeShape(shape);
 
         // Is the score better?
@@ -92,7 +91,7 @@ public class WWUnderbot extends AbstractBot {
     return bestShapeStateAssessment;
   }
 
-  private double calculateScore(AssessableField field) {
+  private double calculateScore(final AssessableField field) {
     return genome.getHeightWeight() * field.getAggregateHeight()
         + genome.getHolesWeight() * field.getHoles()
         + genome.getCompletenessWeight() * field.getCompleteness()
@@ -100,22 +99,22 @@ public class WWUnderbot extends AbstractBot {
   }
 
   private class ShapeStateAssessment {
-    public Point location;
-    public int rotation;
-    public double score;
+    public final Point location;
+    public final int rotation;
+    public final double score;
 
-    public ShapeStateAssessment(Shape shape, int rotation, double score) {
-      this(shape.getLocation(), rotation, score);
+    public ShapeStateAssessment(final Shape shape, final double score) {
+      this(shape.getLocation(), shape.getRotation(), score);
     }
 
-    public ShapeStateAssessment(Point location, int rotation, double score) {
+    public ShapeStateAssessment(final Point location, final int rotation, final double score) {
       this.location = location;
       this.rotation = rotation;
       this.score = score;
     }
 
-    public ArrayList<MoveType> getMoves(Point targetLocation) {
-      ArrayList<MoveType> moves = new ArrayList<>();
+    public ArrayList<MoveType> getMoves(final Point targetLocation) {
+      final ArrayList<MoveType> moves = new ArrayList<>();
 
       // Move to target column
       int currentColumn = location.x;

@@ -17,5 +17,5 @@ import java.util.ArrayList;
  * @author Matthias
  */
 public abstract class AbstractBot {
-  public abstract ArrayList<MoveType> getMoves(BotState state, long timeout);
+  public abstract ArrayList<MoveType> getMoves(final BotState state, final long timeout);
 }

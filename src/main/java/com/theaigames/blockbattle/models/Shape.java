@@ -5,7 +5,6 @@
 package com.theaigames.blockbattle.models;
 
 import de.uni_muenster.wi.wwunderbot.models.AssessableField;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 
@@ -35,13 +34,19 @@ public class Shape implements Cloneable {
 
   private int size;
 
+  private int rotation;
+
+  private int emptyCellsTop = 0;
+  private int emptyCellsRight = 0;
+  private int emptyCellsBottom = 0;
+  private int emptyCellsLeft = 0;
+
   /**
    * Upper left position of the cell in the field
    */
   private Point location;
   private Field field;
   private ArrayList<MoveType> moves = new ArrayList<>();
-  private double score = 0;
 
   public Shape(final ShapeType type, final Field field, final Point location) {
     if (type == null || field == null || location == null)
@@ -69,6 +74,8 @@ public class Shape implements Cloneable {
         blocks[1] = shape[1][1];
         blocks[2] = shape[2][1];
         blocks[3] = shape[3][1];
+        emptyCellsTop = 1;
+        emptyCellsBottom = 2;
         break;
 
       case J:
@@ -78,6 +85,7 @@ public class Shape implements Cloneable {
         blocks[1] = shape[0][1];
         blocks[2] = shape[1][1];
         blocks[3] = shape[2][1];
+        emptyCellsBottom = 1;
         break;
 
       case L:
@@ -87,6 +95,7 @@ public class Shape implements Cloneable {
         blocks[1] = shape[0][1];
         blocks[2] = shape[1][1];
         blocks[3] = shape[2][1];
+        emptyCellsBottom = 1;
         break;
 
       case O:
@@ -105,6 +114,7 @@ public class Shape implements Cloneable {
         blocks[1] = shape[2][0];
         blocks[2] = shape[0][1];
         blocks[3] = shape[1][1];
+        emptyCellsBottom = 1;
         break;
 
       case T:
@@ -114,6 +124,7 @@ public class Shape implements Cloneable {
         blocks[1] = shape[0][1];
         blocks[2] = shape[1][1];
         blocks[3] = shape[2][1];
+        emptyCellsBottom = 1;
         break;
 
       case Z:
@@ -123,6 +134,7 @@ public class Shape implements Cloneable {
         blocks[1] = shape[1][0];
         blocks[2] = shape[1][1];
         blocks[3] = shape[2][1];
+        emptyCellsBottom = 1;
         break;
     }
 
@@ -150,8 +162,8 @@ public class Shape implements Cloneable {
       throw new InternalError(e);
     }
 
-    cloned.location = location.clone();
     cloned.field = field.clone();
+    cloned.location = location.clone();
 
     cloned.shape = new Cell[size][size];
     for (int x = 0; x < size; x++)
@@ -160,7 +172,7 @@ public class Shape implements Cloneable {
 
     cloned.blocks = new Cell[4];
     for (int x = 0; x < size; x++)
-      cloned.blocks [x] = blocks[x].clone();
+      cloned.blocks[x] = blocks[x].clone();
 
     return cloned;
   }
@@ -176,7 +188,14 @@ public class Shape implements Cloneable {
       for (int x = 0; x < size; x++)
         shape[x][y] = temp[x][size - y - 1];
 
+    final int tmpEmptyCellsTop;
+    tmpEmptyCellsTop = emptyCellsTop;
+    emptyCellsTop = emptyCellsRight;
+    emptyCellsRight = emptyCellsBottom;
+    emptyCellsBottom = emptyCellsLeft;
+    emptyCellsLeft = tmpEmptyCellsTop;
     setBlockLocations();
+    rotation = Math.floorMod(--rotation, 4);
   }
 
   /**
@@ -186,8 +205,14 @@ public class Shape implements Cloneable {
     final Cell[][] temp = transposeShape();
     for (int x = 0; x < size; x++)
       shape[x] = temp[size - x - 1];
-
+    final int tmpEmptyCellsTop;
+    tmpEmptyCellsTop = emptyCellsTop;
+    emptyCellsTop = emptyCellsLeft;
+    emptyCellsLeft = emptyCellsBottom;
+    emptyCellsBottom = emptyCellsRight;
+    emptyCellsRight = tmpEmptyCellsTop;
     setBlockLocations();
+    rotation = ++rotation % 4;
   }
 
   public void oneDown() {
@@ -211,43 +236,27 @@ public class Shape implements Cloneable {
   }
 
   public void moveToOrigin() {
-    switch (type) {
-      case I:
-        break;
-
-      case J:
-        break;
-
-      case L:
-        break;
-
-      case O:
-        break;
-
-      case S:
-        break;
-
-      case T:
-        break;
-
-      case Z:
-        break;
-    }
-    throw new NotImplementedException();
-  }
-
-  public boolean isRight(AssessableField field) {
-    throw new NotImplementedException();
-  }
-
-  public boolean isLeft(AssessableField field) {
-    throw new NotImplementedException();
+    setLocation(new Point(-emptyCellsLeft, -emptyCellsTop));
   }
 
   public void drop(Field field) {
-    while (field.canBeAdded(this))
-      oneDown();
+    // TODO:
+    while (field.canBeAdded(this)) oneDown();
     oneUp();
+  }
+
+  public void drop(AssessableField field) {
+    // TODO:
+    while (field.canBeAdded(this)) oneDown();
+    oneUp();
+  }
+
+  public boolean isLeft() {
+    return shape[0][0].getLocation().x == -emptyCellsLeft;
+  }
+
+  public boolean isRight(AssessableField field) {
+    return shape[0][size - 1 - emptyCellsRight].getLocation().x == field.getWidth() - 1;
   }
 
   /**
@@ -263,6 +272,7 @@ public class Shape implements Cloneable {
 
     return temp;
   }
+
 
   /**
    * Uses the shape's current orientation and position to set the actual
@@ -314,11 +324,7 @@ public class Shape implements Cloneable {
     moves.add(move);
   }
 
-  public double getScore() {
-    return score;
-  }
-
-  public void setScore(double score) {
-    this.score = score;
+  public int getRotation() {
+    return rotation;
   }
 }
