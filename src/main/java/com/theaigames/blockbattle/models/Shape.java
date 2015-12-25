@@ -256,7 +256,7 @@ public class Shape implements Cloneable {
   }
 
   public boolean isRight(AssessableField field) {
-    return shape[0][size - 1 - emptyCellsRight].getLocation().x == field.getWidth() - 1;
+    return shape[size - 1 - emptyCellsRight][0].getLocation().x == field.getWidth() - 1;
   }
 
   /**
