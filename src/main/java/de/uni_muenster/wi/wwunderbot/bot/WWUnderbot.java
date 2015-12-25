@@ -43,8 +43,9 @@ public class WWUnderbot extends AbstractBot {
         state.getCurrentShape(),
         state.getNextShape()
     };
-    return findTargetShapeState(state.getMyField(), shapes, 0)
-        .getMoves(state.getCurrentShape().getLocation());
+    ShapeStateAssessment ssA = findTargetShapeState(state.getMyField(), shapes, 0);
+    System.err.println(ssA);
+    return ssA.getMoves(state.getCurrentShape().getLocation());
   }
 
   private ShapeStateAssessment findTargetShapeState(final AssessableField field, final Shape[] shapes, final int shapeIndex) {
@@ -52,7 +53,7 @@ public class WWUnderbot extends AbstractBot {
     final Point originalLocation = shape.getLocation().clone();
     boolean hasColumnsToAssess = true;
     ShapeStateAssessment bestShapeStateAssessment, shapeStateAssessment;
-    bestShapeStateAssessment = new ShapeStateAssessment(shape, 0);
+    bestShapeStateAssessment = new ShapeStateAssessment(shape, Integer.MIN_VALUE);
 
     // Try all possible rotations
     for (int rotation = 0; rotation < 4; rotation++) {
@@ -62,14 +63,14 @@ public class WWUnderbot extends AbstractBot {
       // Try all possible columns
       while (hasColumnsToAssess) {
         if (shape.isRight(field)) hasColumnsToAssess = false;
-        if (field.canBeAdded(shape)) continue;
+        if (!field.canBeAdded(shape)) continue;
 
         Point locationAfterRotation = shape.getLocation().clone();
         shape.drop(field);
 
         // Calculate score of field assuming we add the shape to it
         field.addShape(shape);
-        if (shapeIndex == shapes.length)
+        if (shapeIndex == shapes.length - 1)
           shapeStateAssessment = new ShapeStateAssessment(shape, calculateScore(field));
         else
           shapeStateAssessment = findTargetShapeState(field, shapes, shapeIndex + 1);
@@ -104,7 +105,7 @@ public class WWUnderbot extends AbstractBot {
     public final double score;
 
     public ShapeStateAssessment(final Shape shape, final double score) {
-      this(shape.getLocation(), shape.getRotation(), score);
+      this(shape.getLocation().clone(), shape.getRotation(), score);
     }
 
     public ShapeStateAssessment(final Point location, final int rotation, final double score) {
@@ -136,6 +137,15 @@ public class WWUnderbot extends AbstractBot {
       moves.add(MoveType.DROP);
 
       return moves;
+    }
+
+    @Override
+    public String toString() {
+      return "ShapeStateAssessment{" +
+        "location=" + location +
+        ", rotation=" + rotation +
+        ", score=" + score +
+        '}';
     }
   }
 }
