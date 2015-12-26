@@ -8,6 +8,8 @@ import de.uni_muenster.wi.wwunderbot.bot.WWUnderbot;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 
 /**
  * Created by Marco on 25.12.2015.
@@ -16,19 +18,23 @@ public class CSVwriter {
 
   private static CSVwriter csvwriter;
 
-  private static final String COMMA_DELIMITER = ";";
+  private static final String COMMA_DELIMITER = ",";
   private static final String NEW_LINE_SEPARATOR = System.getProperty("line.separator");
 
   private static final String CSV_HEADER = "status (round, etc.), x, y, rotation, score, best_x, best_y, best_rotation, best_score";
 
-  private FileWriter writer;
+  private Writer writer;
 
-  private CSVwriter() {
+  /*private CSVwriter() {
     try {
       this.writer = new FileWriter("results.csv");
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }*/
+
+  private CSVwriter() {
+    this.writer = new StringWriter();
   }
 
   public static CSVwriter getCSVwriterInstance() {
@@ -48,7 +54,7 @@ public class CSVwriter {
       this.writer.append(COMMA_DELIMITER);
       this.writer.append(String.valueOf(shapeStateAssessment.rotation));
       this.writer.append(COMMA_DELIMITER);
-      this.writer.append(String.valueOf(shapeStateAssessment.score));
+      this.writer.append(Double.toString(shapeStateAssessment.score));
       this.writer.append(NEW_LINE_SEPARATOR);
       this.writer.flush();
     } catch (IOException e) {
@@ -66,7 +72,7 @@ public class CSVwriter {
       this.writer.append(COMMA_DELIMITER);
       this.writer.append(String.valueOf(shapeStateAssessment.rotation));
       this.writer.append(COMMA_DELIMITER);
-      this.writer.append(String.valueOf(shapeStateAssessment.score));
+      this.writer.append(Double.toString(shapeStateAssessment.score));
       this.writer.append(NEW_LINE_SEPARATOR);
       this.writer.flush();
     } catch (IOException e) {
@@ -92,7 +98,7 @@ public class CSVwriter {
       this.writer.append(COMMA_DELIMITER);
       this.writer.append(String.valueOf(shapeStateAssessment.rotation));
       this.writer.append(COMMA_DELIMITER);
-      this.writer.append(String.valueOf(shapeStateAssessment.score));
+      this.writer.append(Double.toString(shapeStateAssessment.score));
       this.writer.append(NEW_LINE_SEPARATOR);
       this.writer.flush();
     } catch (IOException e) {

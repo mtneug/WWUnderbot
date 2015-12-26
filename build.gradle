@@ -59,3 +59,8 @@ task server_run(dependsOn: 'classes', type: JavaExec) {
     "java -cp $buildDir/classes/main Main"
   ]
 }
+
+task srcZip(type: Zip) {
+  classifier = 'src'
+  from sourceSets*.allSource
+}

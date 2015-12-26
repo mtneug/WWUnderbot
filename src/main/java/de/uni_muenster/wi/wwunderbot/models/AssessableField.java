@@ -32,6 +32,12 @@ public class AssessableField extends Field {
   }
 
   @Override
+  public void removeShape(Shape shape) {
+    super.removeShape(shape);
+    changed = true;
+  }
+
+  @Override
   public AssessableField clone() {
     final AssessableField cloned = (AssessableField) super.clone();
     cloned.columnHeights = new int[getWidth()];

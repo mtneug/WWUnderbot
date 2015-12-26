@@ -45,8 +45,8 @@ public class WWUnderbot extends AbstractBot {
   public ArrayList<MoveType> getMoves(final BotState state, final long timeout) {
     state.initShapes();
     final Shape[] shapes = new Shape[]{
-        state.getCurrentShape(),
-        state.getNextShape()
+        state.getCurrentShape()
+        //state.getNextShape()
     };
     csvwriter.writeStatus("Round " + roundnr++);
     ShapeStateAssessment ssA = findTargetShapeState(state.getMyField(), shapes, 0);
@@ -57,10 +57,9 @@ public class WWUnderbot extends AbstractBot {
   private ShapeStateAssessment findTargetShapeState(final AssessableField field, final Shape[] shapes, final int shapeIndex) {
     final Shape shape = shapes[shapeIndex];
     final Point originalLocation = shape.getLocation().clone();
-
+    double score;
     boolean hasColumnsToAssess = true;
-    ShapeStateAssessment bestShapeStateAssessment, shapeStateAssessment;
-    bestShapeStateAssessment = new ShapeStateAssessment(shape, Integer.MIN_VALUE);
+    ShapeStateAssessment bestShapeStateAssessment = new ShapeStateAssessment(shape, Integer.MIN_VALUE);
 
     // Try all possible rotations
     for (int rotation = 0; rotation < 4; rotation++) {
@@ -77,26 +76,27 @@ public class WWUnderbot extends AbstractBot {
 
         // Calculate score of field assuming we add the shape to it
         field.addShape(shape);
+        String string;
         if (shapeIndex == shapes.length - 1) {
-          shapeStateAssessment = new ShapeStateAssessment(shape, calculateScore(field));
-          // <WICHTIG> csvwriter.writeStatusResult("non-recursive", shapeStateAssessment);
-          csvwriter.writeStatus("non-recursive");
+          score = calculateScore(field);
+          string = "T: " + shape.getType() + "    " + "I: " + shapeIndex + "    " +  "non-recursive";
         }
         else {
-          shapeStateAssessment = findTargetShapeState(field, shapes, shapeIndex + 1);
-          // <WICHTIG> csvwriter.writeStatusResult("recursive", shapeStateAssessment);
-          csvwriter.writeStatus("recursive");
+          score = findTargetShapeState(field, shapes, shapeIndex + 1).score;
+          string = "T: " + shape.getType() + "    " + "I: " + shapeIndex + "    " +  "recursive";
+          //csvwriter.writeStatus("recursive");
         }
         field.removeShape(shape);
+        csvwriter.writeStatusResult(string, new ShapeStateAssessment(shape, score));
 
         // Is the score better?
-        if (shapeStateAssessment.score > bestShapeStateAssessment.score) {
-          this.csvwriter.writeStatusResult("Shape: ", shapeStateAssessment);
-          this.csvwriter.writeStatusResult("Best-Shape: ", bestShapeStateAssessment);
-          bestShapeStateAssessment = new ShapeStateAssessment(new Point((int) shapeStateAssessment.location.getX(), (int) shapeStateAssessment.location.getY()),
-            shapeStateAssessment.rotation, shapeStateAssessment.score);
+        if (score >= bestShapeStateAssessment.score) {
+          ShapeStateAssessment shapeStateAssessment = new ShapeStateAssessment(shape, score);
+          //this.csvwriter.writeStatusResult("Shape: ", shapeStateAssessment);
+          //this.csvwriter.writeStatusResult("Best-Shape: ", bestShapeStateAssessment);
+          bestShapeStateAssessment = shapeStateAssessment;
 
-          this.csvwriter.writeStatusResult("New Best-Shape: ", bestShapeStateAssessment);
+          //this.csvwriter.writeStatusResult("New Best-Shape: ", bestShapeStateAssessment);
         }
 
         //System.err.println("SHAPE STATE ASSESSMENT AFTER MOVE: " + shapeStateAssessment);
@@ -112,7 +112,7 @@ public class WWUnderbot extends AbstractBot {
       shape.rotateRight();
     }
 
-    // <WICHTIG> csvwriter.writeBestResult(bestShapeStateAssessment);
+    csvwriter.writeBestResult(bestShapeStateAssessment);
     shape.setLocation(originalLocation);
     return bestShapeStateAssessment;
   }
@@ -122,7 +122,6 @@ public class WWUnderbot extends AbstractBot {
       + genome.getCompletenessWeight() * field.getCompleteness()
       + genome.getHolesWeight() * field.getHoles()
       + genome.getBumpinessWeight() * field.getBumpiness());
-    System.exit(-666);
     return genome.getHeightWeight() * field.getAggregateHeight()
       + genome.getCompletenessWeight() * field.getCompleteness()
       + genome.getHolesWeight() * field.getHoles()
@@ -144,13 +143,13 @@ public class WWUnderbot extends AbstractBot {
       this.score = score;
     }
 
-    public ArrayList<MoveType> getMoves(final Point targetLocation) {
+    public ArrayList<MoveType> getMoves(final Point currentLocation) {
       final ArrayList<MoveType> moves = new ArrayList<>();
 
       // Move to target column
-      int currentColumn = location.x;
-      while (currentColumn != targetLocation.x) {
-        if (currentColumn < targetLocation.x) {
+      int currentColumn = currentLocation.x;
+      while (currentColumn != location.x) {
+        if (currentColumn < location.x) {
           moves.add(MoveType.RIGHT);
           currentColumn++;
         } else {

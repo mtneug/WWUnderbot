@@ -126,6 +126,7 @@ public class BotState {
       // update b field [[c,...];...]: The complete playing field of the given player
       case "field":
         players.get(player).setField(new AssessableField(this.FIELD_WIDTH, this.FIELD_HEIGHT, value));
+        //System.err.println(value);
         break;
 
       // update game this_piece_position i,i: The starting position in the field for
