@@ -11,6 +11,7 @@ import com.theaigames.blockbattle.models.Point;
 import com.theaigames.blockbattle.models.Shape;
 import de.uni_muenster.wi.wwunderbot.ga.Genome;
 import de.uni_muenster.wi.wwunderbot.models.AssessableField;
+import de.uni_muenster.wi.wwunderbot.util.CSVwriter;
 
 import java.util.ArrayList;
 
@@ -24,9 +25,13 @@ import java.util.ArrayList;
  */
 public class WWUnderbot extends AbstractBot {
   private final Genome genome;
+  private final CSVwriter csvwriter;
+  private int roundnr;
 
   public WWUnderbot(Genome genome) {
     this.genome = genome;
+    this.csvwriter = CSVwriter.getCSVwriterInstance();
+    this.roundnr = 1;
   }
 
   /**
@@ -43,14 +48,16 @@ public class WWUnderbot extends AbstractBot {
         state.getCurrentShape(),
         state.getNextShape()
     };
+    csvwriter.writeStatus("Round " + roundnr++);
     ShapeStateAssessment ssA = findTargetShapeState(state.getMyField(), shapes, 0);
-    System.err.println(ssA);
+    System.err.println("SHAPE STATE ASSESSMENT: " + ssA);
     return ssA.getMoves(state.getCurrentShape().getLocation());
   }
 
   private ShapeStateAssessment findTargetShapeState(final AssessableField field, final Shape[] shapes, final int shapeIndex) {
     final Shape shape = shapes[shapeIndex];
     final Point originalLocation = shape.getLocation().clone();
+
     boolean hasColumnsToAssess = true;
     ShapeStateAssessment bestShapeStateAssessment, shapeStateAssessment;
     bestShapeStateAssessment = new ShapeStateAssessment(shape, Integer.MIN_VALUE);
@@ -70,36 +77,59 @@ public class WWUnderbot extends AbstractBot {
 
         // Calculate score of field assuming we add the shape to it
         field.addShape(shape);
-        if (shapeIndex == shapes.length - 1)
+        if (shapeIndex == shapes.length - 1) {
           shapeStateAssessment = new ShapeStateAssessment(shape, calculateScore(field));
-        else
+          // <WICHTIG> csvwriter.writeStatusResult("non-recursive", shapeStateAssessment);
+          csvwriter.writeStatus("non-recursive");
+        }
+        else {
           shapeStateAssessment = findTargetShapeState(field, shapes, shapeIndex + 1);
+          // <WICHTIG> csvwriter.writeStatusResult("recursive", shapeStateAssessment);
+          csvwriter.writeStatus("recursive");
+        }
         field.removeShape(shape);
 
         // Is the score better?
-        if (shapeStateAssessment.score > bestShapeStateAssessment.score)
-          bestShapeStateAssessment = shapeStateAssessment;
+        if (shapeStateAssessment.score > bestShapeStateAssessment.score) {
+          this.csvwriter.writeStatusResult("Shape: ", shapeStateAssessment);
+          this.csvwriter.writeStatusResult("Best-Shape: ", bestShapeStateAssessment);
+          bestShapeStateAssessment = new ShapeStateAssessment(new Point((int) shapeStateAssessment.location.getX(), (int) shapeStateAssessment.location.getY()),
+            shapeStateAssessment.rotation, shapeStateAssessment.score);
 
+          this.csvwriter.writeStatusResult("New Best-Shape: ", bestShapeStateAssessment);
+        }
+
+        //System.err.println("SHAPE STATE ASSESSMENT AFTER MOVE: " + shapeStateAssessment);
         shape.setLocation(locationAfterRotation);
         shape.oneRight();
+        //csvwriter.writeResult(shapeStateAssessment);
       }
+
+
+      hasColumnsToAssess = true;
 
       // Rotate shape
       shape.rotateRight();
     }
 
+    // <WICHTIG> csvwriter.writeBestResult(bestShapeStateAssessment);
     shape.setLocation(originalLocation);
     return bestShapeStateAssessment;
   }
 
   private double calculateScore(final AssessableField field) {
+    System.out.println("ASCORE: " + genome.getHeightWeight() * field.getAggregateHeight()
+      + genome.getCompletenessWeight() * field.getCompleteness()
+      + genome.getHolesWeight() * field.getHoles()
+      + genome.getBumpinessWeight() * field.getBumpiness());
+    System.exit(-666);
     return genome.getHeightWeight() * field.getAggregateHeight()
-        + genome.getHolesWeight() * field.getHoles()
-        + genome.getCompletenessWeight() * field.getCompleteness()
-        + genome.getBumpinessWeight() * field.getBumpiness();
+      + genome.getCompletenessWeight() * field.getCompleteness()
+      + genome.getHolesWeight() * field.getHoles()
+      + genome.getBumpinessWeight() * field.getBumpiness();
   }
 
-  private class ShapeStateAssessment {
+  public class ShapeStateAssessment {
     public final Point location;
     public final int rotation;
     public final double score;
@@ -131,7 +161,7 @@ public class WWUnderbot extends AbstractBot {
 
       // Rotate
       for (int i = 0; i < rotation; i++)
-        moves.add(MoveType.RIGHT);
+        moves.add(MoveType.TURNRIGHT);
 
       // Move to bottom
       moves.add(MoveType.DROP);
