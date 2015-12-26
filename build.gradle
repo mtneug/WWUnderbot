@@ -46,7 +46,16 @@ task run(overwrite: true, type: JavaExec) {
   main = mainClassName
   classpath = sourceSets.main.runtimeClasspath
   args = [
-    "de.uni_muenster.wi.wwunderbot.Main",
-    "de.uni_muenster.wi.wwunderbot.Main"
+    "Main",
+    "Main"
+  ]
+}
+
+task server_run(dependsOn: 'classes', type: JavaExec) {
+  main = 'com.theaigames.blockbattle.Blockbattle'
+  classpath = sourceSets.main.runtimeClasspath
+  args = [
+    "java -cp $buildDir/classes/main Main",
+    "java -cp $buildDir/classes/main Main"
   ]
 }

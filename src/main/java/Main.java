@@ -2,8 +2,6 @@
  * Copyright (c) 2015. WWUnderbot team
  */
 
-package de.uni_muenster.wi.wwunderbot;
-
 import com.theaigames.blockbattle.bot.BotParser;
 import de.uni_muenster.wi.wwunderbot.bot.WWUnderbot;
 import de.uni_muenster.wi.wwunderbot.ga.Genome;
