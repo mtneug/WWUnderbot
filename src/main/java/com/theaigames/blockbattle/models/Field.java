@@ -19,10 +19,17 @@ public class Field implements Cloneable {
   private final int height;
   private Cell[][] grid;
 
-  public Field(final int width, final int height, final String fieldString) {
+  public Field(final int width, final int height) {
     this.width = width;
     this.height = height;
-    parse(fieldString);
+    initGrid();
+  }
+
+  private void initGrid() {
+    grid = new Cell[width][height];
+    for (int x = 0; x < width; x++)
+      for (int y = 0; y < height; y++)
+        grid[x][y] = new Cell(new Point(x, y));
   }
 
   @Override
@@ -43,38 +50,19 @@ public class Field implements Cloneable {
     return cloned;
   }
 
-  /**
-   * Parses the input string to get a grid with Cell objects
-   *
-   * @param fieldString input string
-   */
-  private void parse(final String fieldString) {
-    grid = new Cell[width][height];
-
-    // get the separate rows
-    final String[] rows = fieldString.split(";");
-    for (int y = 0; y < height; y++) {
-      final String[] cells = rows[y].split(",");
-
-      // parse each cell of the row
-      for (int x = 0; x < width; x++) {
-        final int cellCode = Integer.parseInt(cells[x]);
-        grid[x][y] = new Cell(new Point(x, y), CellType.values()[cellCode]);
-      }
-    }
-  }
-
   public void addShape(final Shape shape) {
     for (int i = 0; i < shape.getBlocks().length; i++) {
       final Point location = shape.getBlocks()[i].getLocation();
-      getCell(location).setState(CellType.BLOCK);
+      if (!isOutOfBoundaries(location))
+        getCell(location).setState(CellType.BLOCK);
     }
   }
 
   public void removeShape(final Shape shape) {
     for (int i = 0; i < shape.getBlocks().length; i++) {
       final Point location = shape.getBlocks()[i].getLocation();
-      getCell(location).setState(CellType.EMPTY);
+      if (!isOutOfBoundaries(location))
+        getCell(location).setState(CellType.EMPTY);
     }
   }
 

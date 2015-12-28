@@ -4,7 +4,7 @@
 
 package com.theaigames.blockbattle.models;
 
-import de.uni_muenster.wi.wwunderbot.models.AssessableField;
+import de.unimuenster.wi.wwunderbot.models.AssessableField;
 
 import java.util.ArrayList;
 

@@ -4,11 +4,7 @@
 
 package com.theaigames.blockbattle.bot;
 
-import com.theaigames.blockbattle.models.Player;
-import com.theaigames.blockbattle.models.Point;
-import com.theaigames.blockbattle.models.Shape;
-import com.theaigames.blockbattle.models.ShapeType;
-import de.uni_muenster.wi.wwunderbot.models.AssessableField;
+import com.theaigames.blockbattle.models.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +33,12 @@ public class BotState {
   private int FIELD_HEIGHT;
   private Shape currentShape;
   private Shape nextShape;
+
+  private final AbstractFieldFactory fieldFactory;
+
+  public BotState(AbstractFieldFactory fieldFactory) {
+    this.fieldFactory = fieldFactory;
+  }
 
   /**
    * Initially set all necessary variables of our objects
@@ -80,7 +82,6 @@ public class BotState {
 
       default:
         System.err.printf("Cannot parse settings with key \"%s\"\n", key);
-        break;
     }
   }
 
@@ -125,7 +126,7 @@ public class BotState {
 
       // update b field [[c,...];...]: The complete playing field of the given player
       case "field":
-        players.get(player).setField(new AssessableField(this.FIELD_WIDTH, this.FIELD_HEIGHT, value));
+        players.get(player).setField(fieldFactory.newField(FIELD_WIDTH, FIELD_HEIGHT, value));
         //System.err.println(value);
         break;
 
@@ -138,7 +139,6 @@ public class BotState {
 
       default:
         System.err.printf("Cannot parse updates with key \"%s\"\n", key);
-        break;
     }
   }
 
@@ -149,16 +149,16 @@ public class BotState {
 
   public Player getOpponent() {
     for (Map.Entry<String, Player> entry : players.entrySet())
-      if (entry.getKey().equals(myBot.getName()))
+      if (!entry.getKey().equals(myBot.getName()))
         return entry.getValue();
     return null;
   }
 
-  public AssessableField getMyField() {
+  public Field getMyField() {
     return myBot.getField();
   }
 
-  public AssessableField getOpponentField() {
+  public Field getOpponentField() {
     return getOpponent().getField();
   }
 

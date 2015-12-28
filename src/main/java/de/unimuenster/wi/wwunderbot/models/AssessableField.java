@@ -2,7 +2,7 @@
  * Copyright (c) 2015. WWUnderbot team
  */
 
-package de.uni_muenster.wi.wwunderbot.models;
+package de.unimuenster.wi.wwunderbot.models;
 
 import com.theaigames.blockbattle.models.CellType;
 import com.theaigames.blockbattle.models.Field;
@@ -20,8 +20,8 @@ public class AssessableField extends Field {
   private int[] columnHeights;
   private boolean changed = true;
 
-  public AssessableField(int width, int height, String fieldString) {
-    super(width, height, fieldString);
+  public AssessableField(int width, int height) {
+    super(width, height);
     columnHeights = new int[width];
   }
 

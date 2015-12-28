@@ -2,11 +2,10 @@
  * Copyright (c) 2015. WWUnderbot team
  */
 
-package de.uni_muenster.wi.wwunderbot.util;
+package de.unimuenster.wi.wwunderbot.util;
 
-import de.uni_muenster.wi.wwunderbot.bot.WWUnderbot;
+import de.unimuenster.wi.wwunderbot.bot.WWUnderbot;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -15,14 +14,10 @@ import java.io.Writer;
  * Created by Marco on 25.12.2015.
  */
 public class CSVwriter {
-
-  private static CSVwriter csvwriter;
-
   private static final String COMMA_DELIMITER = ",";
   private static final String NEW_LINE_SEPARATOR = System.getProperty("line.separator");
-
   private static final String CSV_HEADER = "status (round, etc.), x, y, rotation, score, best_x, best_y, best_rotation, best_score";
-
+  private static CSVwriter csvwriter;
   private Writer writer;
 
   /*private CSVwriter() {
@@ -38,7 +33,7 @@ public class CSVwriter {
   }
 
   public static CSVwriter getCSVwriterInstance() {
-    if(csvwriter == null) {
+    if (csvwriter == null) {
       csvwriter = new CSVwriter();
     }
     return csvwriter;

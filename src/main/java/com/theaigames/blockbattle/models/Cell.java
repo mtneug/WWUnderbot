@@ -18,7 +18,11 @@ public class Cell implements Cloneable {
   private CellType state;
 
   public Cell() {
-    this(null, CellType.EMPTY);
+    this(null);
+  }
+
+  public Cell(Point point) {
+    this(point, CellType.EMPTY);
   }
 
   public Cell(final Point location, final CellType type) {
@@ -72,5 +76,13 @@ public class Cell implements Cloneable {
 
   void setLocation(Point point) {
     this.location = point;
+  }
+
+  @Override
+  public String toString() {
+    return "Cell{" +
+        "location=" + location +
+        ", state=" + state +
+        '}';
   }
 }

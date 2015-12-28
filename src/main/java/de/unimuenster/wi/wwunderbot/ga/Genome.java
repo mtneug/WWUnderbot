@@ -2,7 +2,7 @@
  * Copyright (c) 2015. WWUnderbot team
  */
 
-package de.uni_muenster.wi.wwunderbot.ga;
+package de.unimuenster.wi.wwunderbot.ga;
 
 /**
  * Representation of a Genome.

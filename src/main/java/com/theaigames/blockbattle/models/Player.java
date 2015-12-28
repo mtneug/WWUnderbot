@@ -4,7 +4,7 @@
 
 package com.theaigames.blockbattle.models;
 
-import de.uni_muenster.wi.wwunderbot.models.AssessableField;
+import de.unimuenster.wi.wwunderbot.models.AssessableField;
 
 /**
  * Represents one of the players. Stores some data about them.
@@ -16,7 +16,7 @@ import de.uni_muenster.wi.wwunderbot.models.AssessableField;
  * @author Matthias
  */
 public class Player {
-  private AssessableField field;
+  private Field field;
   private String name;
   private int points;
   private int combo;
@@ -26,11 +26,11 @@ public class Player {
     this.name = name;
   }
 
-  public AssessableField getField() {
+  public Field getField() {
     return this.field;
   }
 
-  public void setField(AssessableField field) {
+  public void setField(Field field) {
     this.field = field;
   }
 

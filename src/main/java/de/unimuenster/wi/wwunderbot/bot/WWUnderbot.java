@@ -2,16 +2,15 @@
  * Copyright (c) 2015. WWUnderbot team
  */
 
-package de.uni_muenster.wi.wwunderbot.bot;
+package de.unimuenster.wi.wwunderbot.bot;
 
 import com.theaigames.blockbattle.bot.AbstractBot;
 import com.theaigames.blockbattle.bot.BotState;
 import com.theaigames.blockbattle.models.MoveType;
 import com.theaigames.blockbattle.models.Point;
 import com.theaigames.blockbattle.models.Shape;
-import de.uni_muenster.wi.wwunderbot.ga.Genome;
-import de.uni_muenster.wi.wwunderbot.models.AssessableField;
-import de.uni_muenster.wi.wwunderbot.util.CSVwriter;
+import de.unimuenster.wi.wwunderbot.ga.Genome;
+import de.unimuenster.wi.wwunderbot.models.AssessableField;
 
 import java.util.ArrayList;
 
@@ -25,13 +24,9 @@ import java.util.ArrayList;
  */
 public class WWUnderbot extends AbstractBot {
   private final Genome genome;
-  private final CSVwriter csvwriter;
-  private int roundnr;
 
   public WWUnderbot(Genome genome) {
     this.genome = genome;
-    this.csvwriter = CSVwriter.getCSVwriterInstance();
-    this.roundnr = 1;
   }
 
   /**
@@ -44,21 +39,23 @@ public class WWUnderbot extends AbstractBot {
   @Override
   public ArrayList<MoveType> getMoves(final BotState state, final long timeout) {
     state.initShapes();
-    final Shape[] shapes = new Shape[]{
-        state.getCurrentShape()
-        //state.getNextShape()
+    final Shape[] shapes = {
+        state.getCurrentShape(),
+        state.getNextShape()
     };
-    csvwriter.writeStatus("Round " + roundnr++);
-    ShapeStateAssessment ssA = findTargetShapeState(state.getMyField(), shapes, 0);
-    System.err.println("SHAPE STATE ASSESSMENT: " + ssA);
-    return ssA.getMoves(state.getCurrentShape().getLocation());
+    return findTargetShapeState((AssessableField) state.getMyField(), shapes, 0).
+        getMoves(state.getCurrentShape().getLocation());
+  }
+
+  public ShapeStateAssessment findTargetShapeState(final AssessableField field, final Shape[] shapes) {
+    return findTargetShapeState(field, shapes, 0);
   }
 
   private ShapeStateAssessment findTargetShapeState(final AssessableField field, final Shape[] shapes, final int shapeIndex) {
     final Shape shape = shapes[shapeIndex];
     final Point originalLocation = shape.getLocation().clone();
     double score;
-    boolean hasColumnsToAssess = true;
+    boolean hasColumnsToAssess;
     ShapeStateAssessment bestShapeStateAssessment = new ShapeStateAssessment(shape, Integer.MIN_VALUE);
 
     // Try all possible rotations
@@ -67,6 +64,7 @@ public class WWUnderbot extends AbstractBot {
       shape.moveToOrigin();
 
       // Try all possible columns
+      hasColumnsToAssess = true;
       while (hasColumnsToAssess) {
         if (shape.isRight(field)) hasColumnsToAssess = false;
         if (!field.canBeAdded(shape)) continue;
@@ -76,56 +74,33 @@ public class WWUnderbot extends AbstractBot {
 
         // Calculate score of field assuming we add the shape to it
         field.addShape(shape);
-        String string;
-        if (shapeIndex == shapes.length - 1) {
+        if (shapeIndex == shapes.length - 1)
           score = calculateScore(field);
-          string = "T: " + shape.getType() + "    " + "I: " + shapeIndex + "    " +  "non-recursive";
-        }
-        else {
+        else
           score = findTargetShapeState(field, shapes, shapeIndex + 1).score;
-          string = "T: " + shape.getType() + "    " + "I: " + shapeIndex + "    " +  "recursive";
-          //csvwriter.writeStatus("recursive");
-        }
         field.removeShape(shape);
-        csvwriter.writeStatusResult(string, new ShapeStateAssessment(shape, score));
 
         // Is the score better?
-        if (score >= bestShapeStateAssessment.score) {
-          ShapeStateAssessment shapeStateAssessment = new ShapeStateAssessment(shape, score);
-          //this.csvwriter.writeStatusResult("Shape: ", shapeStateAssessment);
-          //this.csvwriter.writeStatusResult("Best-Shape: ", bestShapeStateAssessment);
-          bestShapeStateAssessment = shapeStateAssessment;
+        if (score > bestShapeStateAssessment.score)
+          bestShapeStateAssessment = new ShapeStateAssessment(shape, score);
 
-          //this.csvwriter.writeStatusResult("New Best-Shape: ", bestShapeStateAssessment);
-        }
-
-        //System.err.println("SHAPE STATE ASSESSMENT AFTER MOVE: " + shapeStateAssessment);
         shape.setLocation(locationAfterRotation);
         shape.oneRight();
-        //csvwriter.writeResult(shapeStateAssessment);
       }
-
-
-      hasColumnsToAssess = true;
 
       // Rotate shape
       shape.rotateRight();
     }
 
-    csvwriter.writeBestResult(bestShapeStateAssessment);
     shape.setLocation(originalLocation);
     return bestShapeStateAssessment;
   }
 
-  private double calculateScore(final AssessableField field) {
-    System.out.println("ASCORE: " + genome.getHeightWeight() * field.getAggregateHeight()
-      + genome.getCompletenessWeight() * field.getCompleteness()
-      + genome.getHolesWeight() * field.getHoles()
-      + genome.getBumpinessWeight() * field.getBumpiness());
+  public double calculateScore(final AssessableField field) {
     return genome.getHeightWeight() * field.getAggregateHeight()
-      + genome.getCompletenessWeight() * field.getCompleteness()
-      + genome.getHolesWeight() * field.getHoles()
-      + genome.getBumpinessWeight() * field.getBumpiness();
+        + genome.getCompletenessWeight() * field.getCompleteness()
+        + genome.getHolesWeight() * field.getHoles()
+        + genome.getBumpinessWeight() * field.getBumpiness();
   }
 
   public class ShapeStateAssessment {
@@ -146,6 +121,24 @@ public class WWUnderbot extends AbstractBot {
     public ArrayList<MoveType> getMoves(final Point currentLocation) {
       final ArrayList<MoveType> moves = new ArrayList<>();
 
+      // Rotate
+      //for (int i = 0; i < rotation; i++)
+      //  moves.add(MoveType.TURNRIGHT);
+      switch (rotation) {
+        case 2:
+          moves.add(MoveType.TURNRIGHT);
+          // fall-through intended
+        case 1:
+          moves.add(MoveType.TURNRIGHT);
+          break;
+        case 3:
+          moves.add(MoveType.TURNLEFT);
+          break;
+        default:
+          throw new IllegalStateException("Rotation cannot be " + rotation);
+        case 0:
+      }
+
       // Move to target column
       int currentColumn = currentLocation.x;
       while (currentColumn != location.x) {
@@ -158,10 +151,6 @@ public class WWUnderbot extends AbstractBot {
         }
       }
 
-      // Rotate
-      for (int i = 0; i < rotation; i++)
-        moves.add(MoveType.TURNRIGHT);
-
       // Move to bottom
       moves.add(MoveType.DROP);
 
@@ -171,10 +160,10 @@ public class WWUnderbot extends AbstractBot {
     @Override
     public String toString() {
       return "ShapeStateAssessment{" +
-        "location=" + location +
-        ", rotation=" + rotation +
-        ", score=" + score +
-        '}';
+          "location=" + location +
+          ", rotation=" + rotation +
+          ", score=" + score +
+          '}';
     }
   }
 }

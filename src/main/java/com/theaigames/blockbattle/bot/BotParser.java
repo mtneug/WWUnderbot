@@ -4,8 +4,8 @@
 
 package com.theaigames.blockbattle.bot;
 
+import com.theaigames.blockbattle.models.FieldFactory;
 import com.theaigames.blockbattle.models.MoveType;
-import de.uni_muenster.wi.wwunderbot.bot.WWUnderbot;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -29,43 +29,55 @@ public class BotParser {
   public BotParser(final AbstractBot bot) {
     this.scan = new Scanner(System.in);
     this.bot = bot;
-    this.currentState = new BotState();
+    this.currentState = new BotState(FieldFactory.getInstance());
+  }
+
+  public BotParser(final AbstractBot bot, final BotState state) {
+    this.scan = new Scanner(System.in);
+    this.bot = bot;
+    this.currentState = state;
   }
 
   public void run() {
     while (scan.hasNextLine()) {
       final String line = scan.nextLine().trim();
       if (line.length() == 0) continue;
+      handleLine(line);
+    }
+  }
 
-      final String[] parts = line.split(" ");
-      switch (parts[0]) {
-        case "settings":
-          currentState.updateSettings(parts[1], parts[2]);
-          break;
+  public void handleLine(String line) {
+    System.err.println("Engine: " + line);
 
-        case "update":
-          currentState.updateState(parts[1], parts[2], parts[3]);
-          break;
+    final String[] parts = line.split(" ");
+    switch (parts[0]) {
+      case "settings":
+        currentState.updateSettings(parts[1], parts[2]);
+        break;
 
-        case "action":
-          final Long timeout = Long.valueOf(parts[2]);
-          ArrayList<MoveType> moves = bot.getMoves(currentState, timeout);
+      case "update":
+        currentState.updateState(parts[1], parts[2], parts[3]);
+        break;
 
-          final StringJoiner output = new StringJoiner(",");
-          if (moves.size() > 0)
-            for (final MoveType move : moves)
-              output.add(move.toString());
-          else
-            output.add("no_moves");
+      case "action":
+        final Long timeout = Long.valueOf(parts[2]);
+        ArrayList<MoveType> moves = bot.getMoves(currentState, timeout);
 
-          System.out.println(output.toString());
-          System.out.flush();
-          System.err.println(output.toString());
-          break;
+        final StringJoiner output = new StringJoiner(",");
+        if (moves.size() > 0)
+          for (final MoveType move : moves)
+            output.add(move.toString());
+        else
+          output.add("no_moves");
 
-        default:
-          System.err.printf("Unable to parse line '%s'\n", line);
-      }
+        System.out.println(output.toString());
+        System.out.flush();
+
+        System.err.println("   Bot: " + output.toString());
+        break;
+
+      default:
+        System.err.printf("Unable to parse line '%s'\n", line);
     }
   }
 }
