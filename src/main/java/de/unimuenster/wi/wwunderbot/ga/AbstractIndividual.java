@@ -27,4 +27,20 @@ public abstract class AbstractIndividual<T> implements Comparable<AbstractIndivi
   public int compareTo(AbstractIndividual individual) {
     return Double.compare(score, individual.score);
   }
+
+  public T getObject() {
+    return object;
+  }
+
+  public void setObject(T object) {
+    this.object = object;
+  }
+
+  public double getScore() {
+    return score;
+  }
+
+  public void setScore(double score) {
+    this.score = score;
+  }
 }

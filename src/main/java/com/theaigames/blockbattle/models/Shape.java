@@ -245,7 +245,7 @@ public class Shape implements Cloneable {
   }
 
   public Shape drop() {
-    while (field.canBeAdded(this)) oneDown();
+    while (field.canBeAdded(oneDown()));
     oneUp();
     return this;
   }

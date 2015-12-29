@@ -46,8 +46,6 @@ public class BotParser {
   }
 
   public void handleLine(String line) {
-    //System.err.println("Engine: " + line);
-
     final String[] parts = line.split(" ");
     switch (parts[0]) {
       case "settings":
