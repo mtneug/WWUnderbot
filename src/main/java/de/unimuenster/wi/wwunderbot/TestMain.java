@@ -4,20 +4,6 @@
 
 package de.unimuenster.wi.wwunderbot;
 
-import com.theaigames.blockbattle.bot.AbstractBot;
-import com.theaigames.blockbattle.bot.BotParser;
-import com.theaigames.blockbattle.bot.BotState;
-import com.theaigames.blockbattle.models.MoveType;
-import com.theaigames.blockbattle.models.Point;
-import com.theaigames.blockbattle.models.Shape;
-import com.theaigames.blockbattle.models.ShapeType;
-import de.unimuenster.wi.wwunderbot.bot.WWUnderbot;
-import de.unimuenster.wi.wwunderbot.ga.Genome;
-import de.unimuenster.wi.wwunderbot.models.AssessableField;
-import de.unimuenster.wi.wwunderbot.models.AssessableFieldFactory;
-
-import java.util.ArrayList;
-
 /**
  * Main entry point.
  *
@@ -27,7 +13,7 @@ import java.util.ArrayList;
  * @author Matthias
  */
 public class TestMain {
-  public void main(String[] args) {
+  /*public void main(String[] args) {
     new TestMain().test2();
   }
 
@@ -241,5 +227,5 @@ public class TestMain {
     System.out.println(field.getHoles());
     System.out.println(bot.calculateScore(field));
     System.out.println();
-  }
+  }*/
 }

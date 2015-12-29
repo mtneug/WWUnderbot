@@ -4,8 +4,6 @@
 
 package com.theaigames.blockbattle.models;
 
-import de.unimuenster.wi.wwunderbot.models.AssessableField;
-
 /**
  * Represents one of the players. Stores some data about them.
  *

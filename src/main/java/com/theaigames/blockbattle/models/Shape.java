@@ -4,8 +4,6 @@
 
 package com.theaigames.blockbattle.models;
 
-import de.unimuenster.wi.wwunderbot.models.AssessableField;
-
 import java.util.ArrayList;
 
 /**
@@ -239,13 +237,7 @@ public class Shape implements Cloneable {
     setLocation(new Point(-emptyCellsLeft, -emptyCellsTop));
   }
 
-  public void drop(Field field) {
-    // TODO:
-    while (field.canBeAdded(this)) oneDown();
-    oneUp();
-  }
-
-  public void drop(AssessableField field) {
+  public void drop() {
     // TODO:
     while (field.canBeAdded(this)) oneDown();
     oneUp();
@@ -255,7 +247,7 @@ public class Shape implements Cloneable {
     return shape[0][0].getLocation().x == -emptyCellsLeft;
   }
 
-  public boolean isRight(AssessableField field) {
+  public boolean isRight() {
     return shape[size - 1 - emptyCellsRight][0].getLocation().x == field.getWidth() - 1;
   }
 

@@ -19,24 +19,22 @@ import java.util.Map;
  * @author Matthias
  */
 public class BotState {
+  private final FieldFactory fieldFactory;
+  private int fieldWidth;
+  private int fieldHeight;
   private HashMap<String, Player> players = new HashMap<>();
   private int round = 0;
-  private int timebank;
+  private long maxTimebank;
+  private long timePerMove;
+  private long timebank;
   private Player myBot;
+  private Shape currentShape;
+  private Shape nextShape;
   private ShapeType currentShapeType;
   private ShapeType nextShapeType;
   private Point shapeLocation;
 
-  private int MAX_TIMEBANK;
-  private int TIME_PER_MOVE;
-  private int FIELD_WIDTH;
-  private int FIELD_HEIGHT;
-  private Shape currentShape;
-  private Shape nextShape;
-
-  private final AbstractFieldFactory fieldFactory;
-
-  public BotState(AbstractFieldFactory fieldFactory) {
+  public BotState(FieldFactory fieldFactory) {
     this.fieldFactory = fieldFactory;
   }
 
@@ -50,13 +48,13 @@ public class BotState {
     switch (key) {
       // settings timebank t: Maximum time in milliseconds that your bot can have in its time bank
       case "timebank":
-        MAX_TIMEBANK = Integer.parseInt(value);
-        timebank = MAX_TIMEBANK;
+        maxTimebank = Integer.parseInt(value);
+        timebank = maxTimebank;
         break;
 
       // settings time_per_move t: Time in milliseconds that is added to your bot's time bank each move
       case "time_per_move":
-        TIME_PER_MOVE = Integer.parseInt(value);
+        timePerMove = Integer.parseInt(value);
         break;
 
       // settings player_names [b,...]: A list of all player names in this match, including your bot's name
@@ -72,12 +70,12 @@ public class BotState {
 
       // settings field_width i: The width of the field, i.e. number of row-cells
       case "field_width":
-        FIELD_WIDTH = Integer.parseInt(value);
+        fieldWidth = Integer.parseInt(value);
         break;
 
       // settings field_height i: The height of the field, i.e. number of column-cells
       case "field_height":
-        FIELD_HEIGHT = Integer.parseInt(value);
+        fieldHeight = Integer.parseInt(value);
         break;
 
       default:
@@ -126,8 +124,7 @@ public class BotState {
 
       // update b field [[c,...];...]: The complete playing field of the given player
       case "field":
-        players.get(player).setField(fieldFactory.newField(FIELD_WIDTH, FIELD_HEIGHT, value));
-        //System.err.println(value);
+        players.get(player).setField(fieldFactory.newField(fieldWidth, fieldHeight, value));
         break;
 
       // update game this_piece_position i,i: The starting position in the field for
@@ -145,6 +142,10 @@ public class BotState {
   public void initShapes() {
     currentShape = new Shape(currentShapeType, getMyField(), shapeLocation);
     nextShape = new Shape(nextShapeType, getMyField(), shapeLocation);
+  }
+
+  public Player getMe() {
+    return myBot;
   }
 
   public Player getOpponent() {
@@ -184,5 +185,33 @@ public class BotState {
 
   public int getRound() {
     return round;
+  }
+
+  public FieldFactory getFieldFactory() {
+    return fieldFactory;
+  }
+
+  public int getFieldWidth() {
+    return fieldWidth;
+  }
+
+  public int getFieldHeight() {
+    return fieldHeight;
+  }
+
+  public long getMaxTimebank() {
+    return maxTimebank;
+  }
+
+  public long getTimePerMove() {
+    return timePerMove;
+  }
+
+  public long getTimebank() {
+    return timebank;
+  }
+
+  void setTimebank(long timebank) {
+    this.timebank = timebank;
   }
 }

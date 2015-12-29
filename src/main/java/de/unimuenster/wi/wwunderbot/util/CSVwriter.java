@@ -4,15 +4,12 @@
 
 package de.unimuenster.wi.wwunderbot.util;
 
-import de.unimuenster.wi.wwunderbot.bot.WWUnderbot;
+import de.unimuenster.wi.wwunderbot.algorithm.HeuristicAlgorithm;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 
-/**
- * Created by Marco on 25.12.2015.
- */
 public class CSVwriter {
   private static final String COMMA_DELIMITER = ",";
   private static final String NEW_LINE_SEPARATOR = System.getProperty("line.separator");
@@ -39,7 +36,7 @@ public class CSVwriter {
     return csvwriter;
   }
 
-  public void writeResult(WWUnderbot.ShapeStateAssessment shapeStateAssessment) {
+  public void writeResult(HeuristicAlgorithm.ShapeStateAssessment shapeStateAssessment) {
     try {
       this.writer.append("");
       this.writer.append(COMMA_DELIMITER);
@@ -57,7 +54,7 @@ public class CSVwriter {
     }
   }
 
-  public void writeStatusResult(String status, WWUnderbot.ShapeStateAssessment shapeStateAssessment) {
+  public void writeStatusResult(String status, HeuristicAlgorithm.ShapeStateAssessment shapeStateAssessment) {
     try {
       this.writer.append(status);
       this.writer.append(COMMA_DELIMITER);
@@ -75,7 +72,7 @@ public class CSVwriter {
     }
   }
 
-  public void writeBestResult(WWUnderbot.ShapeStateAssessment shapeStateAssessment) {
+  public void writeBestResult(HeuristicAlgorithm.ShapeStateAssessment shapeStateAssessment) {
     try {
       this.writer.append("");
       this.writer.append(COMMA_DELIMITER);

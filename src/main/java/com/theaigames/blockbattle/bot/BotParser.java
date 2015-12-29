@@ -27,15 +27,13 @@ public class BotParser {
   private BotState currentState;
 
   public BotParser(final AbstractBot bot) {
-    this.scan = new Scanner(System.in);
-    this.bot = bot;
-    this.currentState = new BotState(FieldFactory.getInstance());
+    this(bot, new FieldFactory());
   }
 
-  public BotParser(final AbstractBot bot, final BotState state) {
+  public BotParser(final AbstractBot bot, FieldFactory fieldFactory) {
     this.scan = new Scanner(System.in);
     this.bot = bot;
-    this.currentState = state;
+    this.currentState = new BotState(fieldFactory);
   }
 
   public void run() {
@@ -47,7 +45,7 @@ public class BotParser {
   }
 
   public void handleLine(String line) {
-    System.err.println("Engine: " + line);
+    //System.err.println("Engine: " + line);
 
     final String[] parts = line.split(" ");
     switch (parts[0]) {
@@ -60,8 +58,8 @@ public class BotParser {
         break;
 
       case "action":
-        final Long timeout = Long.valueOf(parts[2]);
-        ArrayList<MoveType> moves = bot.getMoves(currentState, timeout);
+        currentState.setTimebank(Long.valueOf(parts[2]));
+        ArrayList<MoveType> moves = bot.getMoves(currentState);
 
         final StringJoiner output = new StringJoiner(",");
         if (moves.size() > 0)
