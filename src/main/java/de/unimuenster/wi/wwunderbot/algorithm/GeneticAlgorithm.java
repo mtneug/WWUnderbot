@@ -4,7 +4,6 @@
 
 package de.unimuenster.wi.wwunderbot.algorithm;
 
-import com.google.common.collect.TreeMultiset;
 import com.theaigames.blockbattle.bot.BotState;
 import com.theaigames.blockbattle.models.Field;
 import com.theaigames.blockbattle.models.MoveType;
@@ -14,6 +13,8 @@ import de.unimuenster.wi.wwunderbot.ga.BotStateEvaluationFunction;
 import de.unimuenster.wi.wwunderbot.ga.MovesIndividual;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.concurrent.TimeoutException;
 
@@ -24,6 +25,13 @@ import java.util.concurrent.TimeoutException;
  * @author Matthias
  */
 public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
+  public final static MoveType[] ALLOWED_MUTATIONS = {
+      MoveType.DOWN,
+      MoveType.LEFT,
+      MoveType.RIGHT,
+      MoveType.TURNLEFT,
+      MoveType.TURNRIGHT
+  };
   public final static long BREAK_MS = 15;
   public final static int NUMBER_OF_ITERATIONS = 100;
   public final static int NUMBER_OF_INDIVIDUALS = 30;
@@ -31,7 +39,7 @@ public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
   public final static double MUTATION_RATE = 0.05;
   private final Random random = new Random();
   private final ArrayList<MovesIndividual> parents = new ArrayList<>();
-  private final TreeMultiset<MovesIndividual> population = TreeMultiset.create();
+  private final PriorityQueue<MovesIndividual> population = new PriorityQueue<>(Comparator.reverseOrder());
   private final MovesIndividual initialIndividual;
   private final BotState state;
   private final BotStateEvaluationFunction evaluationFunction;
@@ -61,7 +69,7 @@ public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
 
     return (population.size() == 0)
         ? initialIndividual.object
-        : population.lastEntry().getElement().object;
+        : population.peek().object;
   }
 
   protected void initPopulation() throws TimeoutException {
@@ -140,21 +148,36 @@ public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
     return new MovesIndividual(offspring);
   }
 
-  protected MovesIndividual mutate(MovesIndividual mi) {
-    int drandom = random.nextInt(100);
-
-    if ((drandom / 100.0d) < MUTATION_RATE) {
-      ArrayList<MoveType> moves = mi.object;
-    }
+  protected MovesIndividual mutate(MovesIndividual individual) {
+    mutateChangeMoves(individual);
+    mutateAddMoves(individual);
+    mutateRemoveMoves(individual);
 
     return null;
+  }
+
+  private void mutateChangeMoves(MovesIndividual individual) {
+    for (int i = 0; i < individual.object.size(); i++) {
+      if (random.nextDouble() < MUTATION_RATE) {
+        MoveType move = ALLOWED_MUTATIONS[random.nextInt(ALLOWED_MUTATIONS.length)];
+        individual.object.set(i, move);
+      }
+    }
+  }
+
+  private void mutateAddMoves(MovesIndividual individual) {
+
+  }
+
+  private void mutateRemoveMoves(MovesIndividual individual) {
+
   }
 
   protected void select() {
     // Select the four best population
     parents.clear();
     int j = 0;
-    for (MovesIndividual individual : population.descendingMultiset()) {
+    for (MovesIndividual individual : population) {
       if (j++ >= NUMBER_OF_SELECTION) break;
       parents.add(individual);
     }
