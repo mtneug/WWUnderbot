@@ -34,7 +34,7 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
         state.getCurrentShape(),
         state.getNextShape()
     };
-    return findTargetShapeState(shapes, 0).getMoves(shapes[0].getLocation());
+    return findTargetShapeState(shapes, 0).getMoves(shapes[0]);
   }
 
   private ShapeStateAssessment findTargetShapeState(Shape[] shapes, final int shapeIndex) {
@@ -98,7 +98,7 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
       this.score = score;
     }
 
-    public ArrayList<MoveType> getMoves(final Point currentLocation) {
+    public ArrayList<MoveType> getMoves(final Shape shape) {
       final ArrayList<MoveType> moves = new ArrayList<>();
 
       // Rotate
@@ -118,7 +118,8 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
       }
 
       // Move to target column
-      int currentColumn = currentLocation.x;
+      Point originalLocation = shape.getLocation().clone();
+      int currentColumn = shape.getLocation().x;
       while (currentColumn != location.x) {
         if (currentColumn < location.x) {
           moves.add(MoveType.RIGHT);
@@ -130,7 +131,11 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
       }
 
       // Move to bottom
+      while (state.getMyField().canBeAdded(shape.oneDown()))
+        moves.add(MoveType.DOWN);
+      moves.remove(moves.size() - 1);
       moves.add(MoveType.DROP);
+      shape.setLocation(originalLocation);
 
       return moves;
     }
