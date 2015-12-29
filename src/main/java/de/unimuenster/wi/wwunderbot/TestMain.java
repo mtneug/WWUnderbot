@@ -207,11 +207,11 @@ public class TestMain {
             break;
 
           case TURNLEFT:
-            shape.rotateLeft();
+            shape.turnLeft();
             break;
 
           case TURNRIGHT:
-            shape.rotateRight();
+            shape.turnRight();
             break;
         }
       }

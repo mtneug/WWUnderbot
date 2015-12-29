@@ -19,7 +19,7 @@ import java.util.ArrayList;
  * @author Marco
  * @author Matthias
  */
-public class HeuristicAlgorithm extends AbstractAlgorithm<Void, ArrayList<MoveType>> {
+public class HeuristicAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
   private final BotState state;
   private final BotStateEvaluationFunction evaluationFunction;
 
@@ -29,7 +29,7 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<Void, ArrayList<MoveTy
   }
 
   @Override
-  public ArrayList<MoveType> generate(Void v) {
+  public ArrayList<MoveType> generate() {
     final Shape[] shapes = {
         state.getCurrentShape(),
         state.getNextShape()
@@ -48,11 +48,12 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<Void, ArrayList<MoveTy
     // Try all possible rotations
     for (int rotation = 0; rotation < 4; rotation++) {
       // Set position to top left corner
-      shape.moveToOrigin();
+      shape.moveToOrigin().oneLeft();
 
       // Try all possible columns
       hasColumnsToAssess = true;
       while (hasColumnsToAssess) {
+        shape.oneRight();
         if (shape.isRight()) hasColumnsToAssess = false;
         if (!field.canBeAdded(shape)) continue;
 
@@ -72,11 +73,10 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<Void, ArrayList<MoveTy
           bestShapeStateAssessment = new ShapeStateAssessment(shape, score);
 
         shape.setLocation(locationAfterRotation);
-        shape.oneRight();
       }
 
       // Rotate shape
-      shape.rotateRight();
+      shape.turnRight();
     }
 
     shape.setLocation(originalLocation);

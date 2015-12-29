@@ -44,10 +44,11 @@ public class WWUnderbot extends AbstractBot {
 
     // Generate initial solution
     HeuristicAlgorithm heuristic = new HeuristicAlgorithm(state, evaluationFunction);
-    ArrayList<MoveType> heuristicSolution = heuristic.generate(null);
+    ArrayList<MoveType> heuristicSolution = heuristic.generate();
+    return heuristicSolution;
 
     // Genetically modify solution
-    GeneticAlgorithm ga = new GeneticAlgorithm(state, evaluationFunction);
-    return ga.generate(heuristicSolution);
+    //GeneticAlgorithm ga = new GeneticAlgorithm(heuristicSolution, state, evaluationFunction);
+    //return ga.generate();
   }
 }

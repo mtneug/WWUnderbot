@@ -180,7 +180,7 @@ public class Shape implements Cloneable {
   /**
    * Rotates the shape counter-clockwise
    */
-  public void rotateLeft() {
+  public Shape turnLeft() {
     final Cell[][] temp = transposeShape();
     for (int y = 0; y < size; y++)
       for (int x = 0; x < size; x++)
@@ -194,12 +194,13 @@ public class Shape implements Cloneable {
     emptyCellsLeft = tmpEmptyCellsTop;
     setBlockLocations();
     rotation = Math.floorMod(--rotation, 4);
+    return this;
   }
 
   /**
    * Rotates the shape clockwise
    */
-  public void rotateRight() {
+  public Shape turnRight() {
     final Cell[][] temp = transposeShape();
     for (int x = 0; x < size; x++)
       shape[x] = temp[size - x - 1];
@@ -211,36 +212,42 @@ public class Shape implements Cloneable {
     emptyCellsRight = tmpEmptyCellsTop;
     setBlockLocations();
     rotation = ++rotation % 4;
+    return this;
   }
 
-  public void oneDown() {
+  public Shape oneDown() {
     location.y++;
     setBlockLocations();
+    return this;
   }
 
-  public void oneUp() {
+  public Shape oneUp() {
     location.y--;
     setBlockLocations();
+    return this;
   }
 
-  public void oneRight() {
+  public Shape oneRight() {
     location.x++;
     setBlockLocations();
+    return this;
   }
 
-  public void oneLeft() {
+  public Shape oneLeft() {
     location.x--;
     setBlockLocations();
+    return this;
   }
 
-  public void moveToOrigin() {
+  public Shape moveToOrigin() {
     setLocation(new Point(-emptyCellsLeft, -emptyCellsTop));
+    return this;
   }
 
-  public void drop() {
-    // TODO:
+  public Shape drop() {
     while (field.canBeAdded(this)) oneDown();
     oneUp();
+    return this;
   }
 
   public boolean isLeft() {
@@ -318,5 +325,26 @@ public class Shape implements Cloneable {
 
   public int getRotation() {
     return rotation;
+  }
+
+  public void setRotation(int rotation) {
+    rotation = Math.floorMod(--rotation, 4);
+    switch (this.rotation - rotation) {
+      case 3:
+      case -3:
+        turnRight();
+        break;
+
+      case 2:
+      case -2:
+        turnRight();
+        turnRight();
+        break;
+
+      case -1:
+      case 1:
+        turnLeft();
+        break;
+    }
   }
 }

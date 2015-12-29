@@ -10,7 +10,7 @@ package de.unimuenster.wi.wwunderbot.ga;
  * @author Marco
  * @author Matthias
  */
-public abstract class AbstractIndividual<T> {
+public abstract class AbstractIndividual<T> implements Comparable<AbstractIndividual> {
   public T object;
   public double score;
 
@@ -21,5 +21,10 @@ public abstract class AbstractIndividual<T> {
   public AbstractIndividual(T object, double score) {
     this.object = object;
     this.score = score;
+  }
+
+  @Override
+  public int compareTo(AbstractIndividual individual) {
+    return Double.compare(score, individual.score);
   }
 }
