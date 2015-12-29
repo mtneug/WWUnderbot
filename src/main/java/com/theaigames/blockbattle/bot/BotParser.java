@@ -6,6 +6,7 @@ package com.theaigames.blockbattle.bot;
 
 import com.theaigames.blockbattle.models.FieldFactory;
 import com.theaigames.blockbattle.models.MoveType;
+import com.theaigames.blockbattle.util.Timer;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -59,6 +60,7 @@ public class BotParser {
 
       case "action":
         currentState.setTimebank(Long.valueOf(parts[2]));
+        currentState.startTimer();
         ArrayList<MoveType> moves = bot.getMoves(currentState);
 
         final StringJoiner output = new StringJoiner(",");

@@ -5,6 +5,7 @@
 package com.theaigames.blockbattle.bot;
 
 import com.theaigames.blockbattle.models.*;
+import com.theaigames.blockbattle.util.Timer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,9 +25,14 @@ public class BotState {
   private int fieldHeight;
   private HashMap<String, Player> players = new HashMap<>();
   private int round = 0;
+
+
+  private Timer timer;
   private long maxTimebank;
   private long timePerMove;
   private long timebank;
+
+
   private Player myBot;
   private Shape currentShape;
   private Shape nextShape;
@@ -213,5 +219,13 @@ public class BotState {
 
   void setTimebank(long timebank) {
     this.timebank = timebank;
+  }
+
+  public Timer getTimer() {
+    return timer;
+  }
+
+  void startTimer() {
+    timer = new Timer(timePerMove);
   }
 }

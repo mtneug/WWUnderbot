@@ -43,7 +43,7 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<Void, ArrayList<MoveTy
     final Point originalLocation = shape.getLocation().clone();
     double score;
     boolean hasColumnsToAssess;
-    ShapeStateAssessment bestShapeStateAssessment = new ShapeStateAssessment(shape, Integer.MIN_VALUE);
+    ShapeStateAssessment bestShapeStateAssessment = new ShapeStateAssessment(shape, Double.NEGATIVE_INFINITY);
 
     // Try all possible rotations
     for (int rotation = 0; rotation < 4; rotation++) {
