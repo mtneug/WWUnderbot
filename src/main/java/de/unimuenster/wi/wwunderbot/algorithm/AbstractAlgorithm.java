@@ -11,5 +11,5 @@ package de.unimuenster.wi.wwunderbot.algorithm;
  * @author Matthias
  */
 public abstract class AbstractAlgorithm<O> {
-  public abstract O generate();
+  public abstract O run();
 }

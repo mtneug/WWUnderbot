@@ -33,7 +33,7 @@ public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
       MoveType.TURNRIGHT
   };
   public final static long BREAK_MS = 15;
-  public final static int NUMBER_OF_ITERATIONS = 100;
+  public final static int NUMBER_OF_ITERATIONS = 1000;
   public final static int NUMBER_OF_INDIVIDUALS = 30;
   public final static int NUMBER_OF_SELECTION = 4;
   public final static double MUTATION_RATE = 0.05;
@@ -43,7 +43,7 @@ public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
   private final MovesIndividual initialIndividual;
   private final BotState state;
   private final BotStateEvaluationFunction evaluationFunction;
-  private boolean changed = true;
+  private boolean parentsChanged = true;
   private double totalWeight = 0;
 
   public GeneticAlgorithm(final ArrayList<MoveType> initialMoves, final BotState state, final BotStateEvaluationFunction evaluationFunction) {
@@ -53,7 +53,7 @@ public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
   }
 
   @Override
-  public ArrayList<MoveType> generate() {
+  public ArrayList<MoveType> run() {
     try {
       // Initialize population
       initPopulation();
@@ -93,8 +93,8 @@ public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
   protected void populateAndEvaluate() throws TimeoutException {
     while (population.size() < NUMBER_OF_INDIVIDUALS) {
       // Create new offspring
-      MovesIndividual parentOne = selectParent().clone();
-      MovesIndividual parentTwo = selectParent().clone();
+      MovesIndividual parentOne = selectParent();
+      MovesIndividual parentTwo = selectParent();
 
       MovesIndividual offspring = crossover(parentOne, parentTwo);
       mutate(offspring);
@@ -112,7 +112,7 @@ public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
    * @see <a href="http://stackoverflow.com/a/6737362">Stack Overflow answer<a/>
    */
   protected MovesIndividual selectParent() {
-    if (changed) updateTotalWeight();
+    if (parentsChanged) updateTotalWeight();
     double r = random.nextDouble() * totalWeight;
     for (MovesIndividual parent : parents) {
       r -= parent.score;
@@ -125,44 +125,49 @@ public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
     totalWeight = 0;
     for (MovesIndividual individual : parents)
       totalWeight = totalWeight + individual.score;
-    changed = false;
+    parentsChanged = false;
   }
 
   protected MovesIndividual crossover(MovesIndividual parentOne, MovesIndividual parentTwo) {
+    final int minSize = Math.min(parentOne.object.size(), parentTwo.object.size());
+
+    if (minSize <= 2)
+      if (parentOne.score < parentTwo.score)
+        return parentTwo.clone();
+      else
+        return parentOne.clone();
+
     final ArrayList<MoveType> offspring = new ArrayList<>();
-    final int parentOneLimit1 = random.nextInt(parentOne.object.size() - 1);
-    final int parentOneLimit2 = parentOneLimit1 + 1 + random.nextInt(parentOne.object.size() - parentOneLimit1 - 1);
-    final int parentTwoLimit1 = random.nextInt(parentTwo.object.size() - 1);
-    final int parentTwoLimit2 = parentTwoLimit1 + 1 + random.nextInt(parentTwo.object.size() - parentTwoLimit1 - 1);
+
+    final int limit1 = random.nextInt(minSize - 1);
+    final int limit2 = limit1 + 1 + random.nextInt(minSize - limit1 - 1);
 
     if (random.nextBoolean()) {
-      offspring.addAll(parentOne.object.subList(0, parentOneLimit1));
-      offspring.addAll(parentTwo.object.subList(parentTwoLimit1, parentTwoLimit2));
-      offspring.addAll(parentOne.object.subList(parentOneLimit2, parentOne.object.size()));
+      offspring.addAll(parentOne.object.subList(0, limit1));
+      offspring.addAll(parentTwo.object.subList(limit1, limit2));
+      offspring.addAll(parentOne.object.subList(limit2, parentOne.object.size()));
     } else {
-      offspring.addAll(parentTwo.object.subList(0, parentTwoLimit1));
-      offspring.addAll(parentOne.object.subList(parentOneLimit1, parentOneLimit2));
-      offspring.addAll(parentTwo.object.subList(parentTwoLimit2, parentTwo.object.size()));
+      offspring.addAll(parentTwo.object.subList(0, limit1));
+      offspring.addAll(parentOne.object.subList(limit1, limit2));
+      offspring.addAll(parentTwo.object.subList(limit2, parentTwo.object.size()));
     }
 
     return new MovesIndividual(offspring);
   }
 
-  protected MovesIndividual mutate(MovesIndividual individual) {
+  protected void mutate(MovesIndividual individual) {
     mutateChangeMoves(individual);
     mutateAddMoves(individual);
     mutateRemoveMoves(individual);
-
-    return null;
   }
 
   private void mutateChangeMoves(MovesIndividual individual) {
-    for (int i = 0; i < individual.object.size(); i++) {
+    // mutate every move except the last one (DROP)
+    for (int i = 0; i < individual.object.size() - 1; i++)
       if (random.nextDouble() < MUTATION_RATE) {
         MoveType move = ALLOWED_MUTATIONS[random.nextInt(ALLOWED_MUTATIONS.length)];
         individual.object.set(i, move);
       }
-    }
   }
 
   private void mutateAddMoves(MovesIndividual individual) {
@@ -170,6 +175,7 @@ public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
   }
 
   private void mutateRemoveMoves(MovesIndividual individual) {
+    // not to small
 
   }
 
@@ -181,7 +187,7 @@ public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
       if (j++ >= NUMBER_OF_SELECTION) break;
       parents.add(individual);
     }
-    changed = true;
+    parentsChanged = true;
 
     // Remove bad population
     population.clear();
@@ -194,7 +200,7 @@ public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
 
     final Field field = state.getMyField();
     final Shape shape = state.getCurrentShape();
-    final Point originalLocation = shape.getLocation();
+    final Point originalLocation = shape.getLocation().clone();
     final int originalRotation = shape.getRotation();
 
     for (MoveType move : individual.object)
@@ -239,5 +245,7 @@ public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
           shape.turnLeft();
         break;
     }
+
+    shape.drop();
   }
 }

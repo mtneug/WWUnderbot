@@ -26,12 +26,10 @@ public class BotState {
   private HashMap<String, Player> players = new HashMap<>();
   private int round = 0;
 
-
   private Timer timer;
   private long maxTimebank;
   private long timePerMove;
   private long timebank;
-
 
   private Player myBot;
   private Shape currentShape;

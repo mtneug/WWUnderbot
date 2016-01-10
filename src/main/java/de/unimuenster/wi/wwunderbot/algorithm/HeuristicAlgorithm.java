@@ -29,7 +29,7 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
   }
 
   @Override
-  public ArrayList<MoveType> generate() {
+  public ArrayList<MoveType> run() {
     final Shape[] shapes = {
         state.getCurrentShape(),
         state.getNextShape()

@@ -79,6 +79,7 @@ public class HeuristicEvaluationFunction extends BotStateEvaluationFunction {
         ;
       if (x == field.getWidth()) completeLines++;
     }
+    // TODO: too risky at the end
     if (completeLines == 1) completeLines--;
     return completeLines;
   }

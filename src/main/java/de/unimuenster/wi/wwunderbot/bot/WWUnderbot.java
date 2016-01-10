@@ -39,16 +39,17 @@ public class WWUnderbot extends AbstractBot {
   public ArrayList<MoveType> getMoves(final BotState state) {
     state.initShapes();
 
+    // TODO: check for skip moves
+
     // Create evaluation function
     HeuristicEvaluationFunction evaluationFunction = new HeuristicEvaluationFunction(genome);
 
     // Generate initial solution
     HeuristicAlgorithm heuristic = new HeuristicAlgorithm(state, evaluationFunction);
-    ArrayList<MoveType> heuristicSolution = heuristic.generate();
-    return heuristicSolution;
+    ArrayList<MoveType> heuristicSolution = heuristic.run();
 
     // Genetically modify solution
-    //GeneticAlgorithm ga = new GeneticAlgorithm(heuristicSolution, state, evaluationFunction);
-    //return ga.generate();
+    GeneticAlgorithm ga = new GeneticAlgorithm(heuristicSolution, state, evaluationFunction);
+    return ga.run();
   }
 }
