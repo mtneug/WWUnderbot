@@ -15,18 +15,32 @@ import com.theaigames.blockbattle.models.Field;
  * @author Matthias
  */
 public class HeuristicEvaluationFunction extends BotStateEvaluationFunction {
-  private Genome genome;
+  private final Genome genome;
 
   public HeuristicEvaluationFunction(Genome genome) {
     this.genome = genome;
   }
 
+  private static int max(int[] ints) {
+    int max = ints[0];
+
+    for (int i = 1; i < ints.length; i++)
+      if (ints[i] > max)
+        max = ints[i];
+
+    return max;
+  }
+
   @Override
   public double evaluate(BotState state) {
-    int[] columnHeights = calculateHeights(state.getMyField());
+    return evaluateField(state.getMyField());
+  }
+
+  public double evaluateField(Field field) {
+    final int[] columnHeights = calculateHeights(field);
     return genome.getHeightWeight() * getAggregateHeight(columnHeights)
-        + genome.getCompletenessWeight() * getCompleteness(state.getMyField())
-        + genome.getHolesWeight() * getHoles(state.getMyField(), columnHeights)
+        + genome.getCompletenessWeight() * getCompleteness(field, columnHeights)
+        + genome.getHolesWeight() * getHoles(field, columnHeights)
         + genome.getBumpinessWeight() * getBumpiness(columnHeights);
   }
 
@@ -67,9 +81,10 @@ public class HeuristicEvaluationFunction extends BotStateEvaluationFunction {
    * end of the field. By that one complete Line is found.
    *
    * @param field
+   * @param columnHeights
    * @return
    */
-  private int getCompleteness(Field field) {
+  private int getCompleteness(Field field, int[] columnHeights) {
     int x, completeLines = 0;
     for (int y = 0; y < field.getHeight(); y++) {
       for (x = 0; x < field.getWidth()
@@ -79,8 +94,8 @@ public class HeuristicEvaluationFunction extends BotStateEvaluationFunction {
         ;
       if (x == field.getWidth()) completeLines++;
     }
-    // TODO: too risky at the end
-    if (completeLines == 1) completeLines--;
+    if (completeLines == 1 && max(columnHeights) < 1.0 / 2.0 * field.getHeight())
+      completeLines--;
     return completeLines;
   }
 

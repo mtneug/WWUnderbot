@@ -5,13 +5,11 @@
 package de.unimuenster.wi.wwunderbot.algorithm;
 
 import com.theaigames.blockbattle.bot.BotState;
-import com.theaigames.blockbattle.models.Field;
-import com.theaigames.blockbattle.models.MoveType;
-import com.theaigames.blockbattle.models.Point;
-import com.theaigames.blockbattle.models.Shape;
+import com.theaigames.blockbattle.models.*;
 import de.unimuenster.wi.wwunderbot.ga.BotStateEvaluationFunction;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Alexander
@@ -19,7 +17,7 @@ import java.util.ArrayList;
  * @author Marco
  * @author Matthias
  */
-public class HeuristicAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
+public class HeuristicAlgorithm extends AbstractAlgorithm<Moves[]> {
   private final BotState state;
   private final BotStateEvaluationFunction evaluationFunction;
 
@@ -29,12 +27,21 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
   }
 
   @Override
-  public ArrayList<MoveType> run() {
+  public Moves[] run() {
     final Shape[] shapes = {
         state.getCurrentShape(),
         state.getNextShape()
     };
-    return findTargetShapeState(shapes, 0).getMoves(shapes[0]);
+
+    final Moves[] moves = new Moves[shapes.length];
+    ShapeStateAssessment shapeStateAssessment = findTargetShapeState(shapes, 0);
+
+    for (int i = 0; i < shapes.length; i++) {
+      moves[i] = new Moves(shapes[i], shapeStateAssessment.getMoves(shapes[i]));
+      shapeStateAssessment = shapeStateAssessment.next;
+    }
+
+    return moves;
   }
 
   private ShapeStateAssessment findTargetShapeState(Shape[] shapes, final int shapeIndex) {
@@ -43,11 +50,13 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
     final Point originalLocation = shape.getLocation().clone();
     double score;
     boolean hasColumnsToAssess;
-    ShapeStateAssessment bestShapeStateAssessment = new ShapeStateAssessment(shape, Double.NEGATIVE_INFINITY);
+    ShapeStateAssessment bestShapeStateAssessment = new ShapeStateAssessment(shape, Double.NEGATIVE_INFINITY, null);
+    ShapeStateAssessment bestShapeStateAssessmentNextShape = null;
 
     // Try all possible rotations
     for (int rotation = 0; rotation < 4; rotation++) {
       // Set position to top left corner
+      // TODO: check if we even come here!
       shape.moveToOrigin().oneLeft();
 
       // Try all possible columns
@@ -65,17 +74,18 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
         if (shapeIndex == shapes.length - 1)
           score = evaluationFunction.evaluate(state);
         else
-          score = findTargetShapeState(shapes, shapeIndex + 1).score;
+          score = (bestShapeStateAssessmentNextShape = findTargetShapeState(shapes, shapeIndex + 1)).score;
         field.removeShape(shape);
 
         // Is the score better?
         if (score > bestShapeStateAssessment.score)
-          bestShapeStateAssessment = new ShapeStateAssessment(shape, score);
+          bestShapeStateAssessment = new ShapeStateAssessment(shape, score, bestShapeStateAssessmentNextShape);
 
         shape.setLocation(locationAfterRotation);
       }
 
       // Rotate shape
+      // TODO: check if we can do this
       shape.turnRight();
     }
 
@@ -87,19 +97,21 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
     public final Point location;
     public final int rotation;
     public final double score;
+    public final ShapeStateAssessment next;
 
-    public ShapeStateAssessment(final Shape shape, final double score) {
-      this(shape.getLocation().clone(), shape.getRotation(), score);
+    public ShapeStateAssessment(final Shape shape, final double score, ShapeStateAssessment next) {
+      this(shape.getLocation().clone(), shape.getRotation(), score, next);
     }
 
-    public ShapeStateAssessment(final Point location, final int rotation, final double score) {
+    public ShapeStateAssessment(final Point location, final int rotation, final double score, ShapeStateAssessment next) {
       this.location = location;
       this.rotation = rotation;
       this.score = score;
+      this.next = next;
     }
 
-    public ArrayList<MoveType> getMoves(final Shape shape) {
-      final ArrayList<MoveType> moves = new ArrayList<>();
+    public List<MoveType> getMoves(final Shape shape) {
+      final List<MoveType> moves = new ArrayList<>();
 
       // Rotate
       switch (rotation) {

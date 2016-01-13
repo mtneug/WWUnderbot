@@ -4,8 +4,6 @@
 
 package com.theaigames.blockbattle.models;
 
-import java.util.ArrayList;
-
 /**
  * Represents the shapes that appear in the field. Some basic methods have
  * already been implemented, but actual move actions, etc. should still be
@@ -44,7 +42,6 @@ public class Shape implements Cloneable {
    */
   private Point location;
   private Field field;
-  private ArrayList<MoveType> moves = new ArrayList<>();
 
   public Shape(final ShapeType type, final Field field, final Point location) {
     if (type == null || field == null || location == null)
@@ -245,7 +242,7 @@ public class Shape implements Cloneable {
   }
 
   public Shape drop() {
-    while (field.canBeAdded(oneDown()));
+    while (field.canBeAdded(oneDown())) ;
     oneUp();
     return this;
   }
@@ -315,35 +312,25 @@ public class Shape implements Cloneable {
     return size;
   }
 
-  public ArrayList<MoveType> getMoves() {
-    return moves;
-  }
-
-  public void addMove(MoveType move) {
-    moves.add(move);
-  }
-
   public int getRotation() {
     return rotation;
   }
 
   public void setRotation(int rotation) {
-    rotation = Math.floorMod(--rotation, 4);
-    switch (this.rotation - rotation) {
-      case 3:
-      case -3:
-        turnRight();
+    rotation = Math.floorMod(this.rotation - rotation, 4);
+
+    switch (rotation) {
+      case 1:
+        turnLeft();
         break;
 
       case 2:
-      case -2:
-        turnRight();
-        turnRight();
+        turnLeft();
+        turnLeft();
         break;
 
-      case -1:
-      case 1:
-        turnLeft();
+      case 3:
+        turnRight();
         break;
     }
   }

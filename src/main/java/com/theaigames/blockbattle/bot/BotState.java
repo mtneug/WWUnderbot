@@ -134,6 +134,7 @@ public class BotState {
       // update game this_piece_position i,i: The starting position in the field for
       //                                      the current piece (top left corner of the piece bounding box)
       case "this_piece_position":
+        // TODO: set location of next piece
         final String[] split = value.split(",");
         shapeLocation = new Point(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
         break;

@@ -5,17 +5,11 @@
 package de.unimuenster.wi.wwunderbot.algorithm;
 
 import com.theaigames.blockbattle.bot.BotState;
-import com.theaigames.blockbattle.models.Field;
-import com.theaigames.blockbattle.models.MoveType;
-import com.theaigames.blockbattle.models.Point;
-import com.theaigames.blockbattle.models.Shape;
+import com.theaigames.blockbattle.models.*;
 import de.unimuenster.wi.wwunderbot.ga.BotStateEvaluationFunction;
-import de.unimuenster.wi.wwunderbot.ga.MovesIndividual;
+import de.unimuenster.wi.wwunderbot.ga.MovesArrayIndividual;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.PriorityQueue;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -24,7 +18,7 @@ import java.util.concurrent.TimeoutException;
  * @author Marco
  * @author Matthias
  */
-public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
+public class GeneticAlgorithm extends AbstractAlgorithm<Moves[]> {
   public final static MoveType[] ALLOWED_MUTATIONS = {
       MoveType.DOWN,
       MoveType.LEFT,
@@ -33,27 +27,33 @@ public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
       MoveType.TURNRIGHT
   };
   public final static long BREAK_MS = 15;
-  public final static int NUMBER_OF_ITERATIONS = 1000;
-  public final static int NUMBER_OF_INDIVIDUALS = 30;
-  public final static int NUMBER_OF_SELECTION = 4;
+  public final static int NUMBER_OF_ITERATIONS = 10000;
+  public final static int NUMBER_OF_INDIVIDUALS = 300;
+  public final static int NUMBER_OF_SELECTION = 10;
   public final static double MUTATION_RATE = 0.05;
   private final Random random = new Random();
-  private final ArrayList<MovesIndividual> parents = new ArrayList<>();
-  private final PriorityQueue<MovesIndividual> population = new PriorityQueue<>(Comparator.reverseOrder());
-  private final MovesIndividual initialIndividual;
+  private final List<MovesArrayIndividual> parents = new ArrayList<>();
+  private final PriorityQueue<MovesArrayIndividual> population = new PriorityQueue<>(Comparator.reverseOrder());
+  private final MovesArrayIndividual initialIndividual;
   private final BotState state;
   private final BotStateEvaluationFunction evaluationFunction;
+  private final Shape[] shapes;
   private boolean parentsChanged = true;
   private double totalWeight = 0;
+  private int iterations = 0;
 
-  public GeneticAlgorithm(final ArrayList<MoveType> initialMoves, final BotState state, final BotStateEvaluationFunction evaluationFunction) {
+  public GeneticAlgorithm(final Moves[] initialMoves, final BotState state, final BotStateEvaluationFunction evaluationFunction) {
     this.state = state;
     this.evaluationFunction = evaluationFunction;
-    this.initialIndividual = new MovesIndividual(initialMoves);
+    this.initialIndividual = new MovesArrayIndividual(initialMoves);
+    this.shapes = new Shape[]{
+        this.state.getCurrentShape(),
+        this.state.getNextShape()
+    };
   }
 
   @Override
-  public ArrayList<MoveType> run() {
+  public Moves[] run() {
     try {
       // Initialize population
       initPopulation();
@@ -61,11 +61,14 @@ public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
       // For each iteration
       for (int i = 0; i < NUMBER_OF_ITERATIONS; i++) {
         // Generate offspring and evaluate it
+        iterations++;
         populateAndEvaluate();
         select();
       }
     } catch (TimeoutException ignored) {
     }
+
+    System.err.println(iterations);
 
     return (population.size() == 0)
         ? initialIndividual.object
@@ -80,7 +83,7 @@ public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
 
     // Mutate initial individual and add to list
     while (parents.size() < NUMBER_OF_SELECTION) {
-      MovesIndividual individual = initialIndividual.clone();
+      MovesArrayIndividual individual = initialIndividual.clone();
 
       mutate(individual);
       evaluate(individual);
@@ -93,10 +96,10 @@ public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
   protected void populateAndEvaluate() throws TimeoutException {
     while (population.size() < NUMBER_OF_INDIVIDUALS) {
       // Create new offspring
-      MovesIndividual parentOne = selectParent();
-      MovesIndividual parentTwo = selectParent();
+      MovesArrayIndividual parentOne = selectParent();
+      MovesArrayIndividual parentTwo = selectParent();
 
-      MovesIndividual offspring = crossover(parentOne, parentTwo);
+      MovesArrayIndividual offspring = crossover(parentOne, parentTwo);
       mutate(offspring);
 
       // Evaluate
@@ -111,10 +114,10 @@ public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
    * @return
    * @see <a href="http://stackoverflow.com/a/6737362">Stack Overflow answer<a/>
    */
-  protected MovesIndividual selectParent() {
+  protected MovesArrayIndividual selectParent() {
     if (parentsChanged) updateTotalWeight();
     double r = random.nextDouble() * totalWeight;
-    for (MovesIndividual parent : parents) {
+    for (MovesArrayIndividual parent : parents) {
       r -= parent.score;
       if (r <= 0.0) return parent;
     }
@@ -123,58 +126,71 @@ public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
 
   private void updateTotalWeight() {
     totalWeight = 0;
-    for (MovesIndividual individual : parents)
+    for (MovesArrayIndividual individual : parents)
       totalWeight = totalWeight + individual.score;
     parentsChanged = false;
   }
 
-  protected MovesIndividual crossover(MovesIndividual parentOne, MovesIndividual parentTwo) {
-    final int minSize = Math.min(parentOne.object.size(), parentTwo.object.size());
+  protected MovesArrayIndividual crossover(final MovesArrayIndividual parentOne, final MovesArrayIndividual parentTwo) {
+    final int size = shapes.length;
+    final Moves[] offspringMovesArray = new Moves[size];
 
-    if (minSize <= 2)
-      if (parentOne.score < parentTwo.score)
-        return parentTwo.clone();
-      else
-        return parentOne.clone();
+    for (int i = 0; i < size; i++) {
+      final Moves movesParentOne = parentOne.object[i];
+      final Moves movesParentTwo = parentTwo.object[i];
+      final int minSize = Math.min(movesParentOne.size(), movesParentTwo.size());
 
-    final ArrayList<MoveType> offspring = new ArrayList<>();
+      if (minSize <= 2)
+        if (parentOne.score < parentTwo.score) {
+          offspringMovesArray[i] = movesParentTwo.clone();
+          continue;
+        } else {
+          offspringMovesArray[i] = movesParentOne.clone();
+          continue;
+        }
 
-    final int limit1 = random.nextInt(minSize - 1);
-    final int limit2 = limit1 + 1 + random.nextInt(minSize - limit1 - 1);
+      final Moves offspringMoves = new Moves(shapes[i]);
 
-    if (random.nextBoolean()) {
-      offspring.addAll(parentOne.object.subList(0, limit1));
-      offspring.addAll(parentTwo.object.subList(limit1, limit2));
-      offspring.addAll(parentOne.object.subList(limit2, parentOne.object.size()));
-    } else {
-      offspring.addAll(parentTwo.object.subList(0, limit1));
-      offspring.addAll(parentOne.object.subList(limit1, limit2));
-      offspring.addAll(parentTwo.object.subList(limit2, parentTwo.object.size()));
+      final int limit1 = random.nextInt(minSize - 1);
+      final int limit2 = limit1 + 1 + random.nextInt(minSize - limit1 - 1);
+
+      if (random.nextBoolean()) {
+        offspringMoves.addAll(movesParentOne.subList(0, limit1));
+        offspringMoves.addAll(movesParentTwo.subList(limit1, limit2));
+        offspringMoves.addAll(movesParentOne.subList(limit2, movesParentOne.size()));
+      } else {
+        offspringMoves.addAll(movesParentTwo.subList(0, limit1));
+        offspringMoves.addAll(movesParentOne.subList(limit1, limit2));
+        offspringMoves.addAll(movesParentTwo.subList(limit2, movesParentTwo.size()));
+      }
+
+      offspringMovesArray[i] = offspringMoves;
     }
 
-    return new MovesIndividual(offspring);
+    return new MovesArrayIndividual(offspringMovesArray);
   }
 
-  protected void mutate(MovesIndividual individual) {
+  protected void mutate(final MovesArrayIndividual individual) {
     mutateChangeMoves(individual);
     mutateAddMoves(individual);
     mutateRemoveMoves(individual);
   }
 
-  private void mutateChangeMoves(MovesIndividual individual) {
-    // mutate every move except the last one (DROP)
-    for (int i = 0; i < individual.object.size() - 1; i++)
-      if (random.nextDouble() < MUTATION_RATE) {
-        MoveType move = ALLOWED_MUTATIONS[random.nextInt(ALLOWED_MUTATIONS.length)];
-        individual.object.set(i, move);
-      }
+  private void mutateChangeMoves(final MovesArrayIndividual individual) {
+    for (Moves moves: individual.object)
+      // mutate every move except the last one (DROP)
+      for (int i = 0; i < moves.size() - 1; i++)
+        if (random.nextDouble() < MUTATION_RATE) {
+          MoveType move = ALLOWED_MUTATIONS[random.nextInt(ALLOWED_MUTATIONS.length)];
+          moves.set(i, move);
+        }
   }
 
-  private void mutateAddMoves(MovesIndividual individual) {
+  private void mutateAddMoves(final MovesArrayIndividual individual) {
 
   }
 
-  private void mutateRemoveMoves(MovesIndividual individual) {
+  private void mutateRemoveMoves(final MovesArrayIndividual individual) {
     // not to small
 
   }
@@ -183,7 +199,7 @@ public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
     // Select the four best population
     parents.clear();
     int j = 0;
-    for (MovesIndividual individual : population) {
+    for (MovesArrayIndividual individual : population) {
       if (j++ >= NUMBER_OF_SELECTION) break;
       parents.add(individual);
     }
@@ -194,58 +210,22 @@ public class GeneticAlgorithm extends AbstractAlgorithm<ArrayList<MoveType>> {
     population.addAll(parents);
   }
 
-  protected void evaluate(MovesIndividual individual) throws TimeoutException {
+  protected void evaluate(final MovesArrayIndividual individual) throws TimeoutException {
     if (state.getTimer().remainingTimeMillis() < BREAK_MS)
       throw new TimeoutException("Timeout");
 
     final Field field = state.getMyField();
-    final Shape shape = state.getCurrentShape();
-    final Point originalLocation = shape.getLocation().clone();
-    final int originalRotation = shape.getRotation();
 
-    for (MoveType move : individual.object)
-      checkAndPerformMove(field, shape, move);
-
-    field.addShape(shape);
-    individual.score = evaluationFunction.evaluate(state);
-
-    field.removeShape(shape);
-    shape.setLocation(originalLocation);
-    shape.setRotation(originalRotation);
-  }
-
-  private void checkAndPerformMove(Field field, Shape shape, MoveType move) {
-    switch (move) {
-      case DOWN:
-        if (!field.canBeAdded(shape.oneDown()))
-          shape.oneUp();
-        break;
-
-      case DROP:
-        shape.drop();
-        break;
-
-      case LEFT:
-        if (!field.canBeAdded(shape.oneLeft()))
-          shape.oneRight();
-        break;
-
-      case RIGHT:
-        if (!field.canBeAdded(shape.oneRight()))
-          shape.oneLeft();
-        break;
-
-      case TURNLEFT:
-        if (!field.canBeAdded(shape.turnLeft()))
-          shape.turnRight();
-        break;
-
-      case TURNRIGHT:
-        if (!field.canBeAdded(shape.turnRight()))
-          shape.turnLeft();
-        break;
+    for (Moves moves : individual.object) {
+      moves.checkAndApply();
+      field.addShape(moves.shape);
     }
 
-    shape.drop();
+    individual.score = evaluationFunction.evaluate(state);
+
+    for (Moves moves : individual.object) {
+      field.removeShape(moves.shape);
+      moves.reset();
+    }
   }
 }

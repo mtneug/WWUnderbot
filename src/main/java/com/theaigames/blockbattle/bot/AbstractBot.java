@@ -4,9 +4,7 @@
 
 package com.theaigames.blockbattle.bot;
 
-import com.theaigames.blockbattle.models.MoveType;
-
-import java.util.ArrayList;
+import com.theaigames.blockbattle.models.Moves;
 
 /**
  * An abstract bot.
@@ -17,5 +15,5 @@ import java.util.ArrayList;
  * @author Matthias
  */
 public abstract class AbstractBot {
-  public abstract ArrayList<MoveType> getMoves(final BotState state);
+  public abstract Moves getMoves(final BotState state);
 }
