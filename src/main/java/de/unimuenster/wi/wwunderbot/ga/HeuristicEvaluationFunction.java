@@ -33,7 +33,9 @@ public class HeuristicEvaluationFunction extends BotStateEvaluationFunction {
 
   @Override
   public double evaluate(BotState state) {
-    return evaluateField(state.getMyField());
+    double score = evaluateField(state.getMyField());
+    if (state.hasLostLookahead()) score = Double.NEGATIVE_INFINITY;
+    return score;
   }
 
   public double evaluateField(Field field) {

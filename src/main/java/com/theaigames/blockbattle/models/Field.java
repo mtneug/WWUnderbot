@@ -81,6 +81,14 @@ public class Field implements Cloneable {
     return 0 > x || x >= width || 0 > y || y >= height;
   }
 
+  public boolean isOutOfBoundaries(final Shape shape) {
+    for (final Cell block : shape.getBlocks())
+      if (isOutOfBoundaries(block.getLocation()))
+        return true;
+
+    return false;
+  }
+
   public boolean canBeAdded(final Cell cell) {
     if (cell.getLocation() == null)
       throw new IllegalArgumentException("No location is set");

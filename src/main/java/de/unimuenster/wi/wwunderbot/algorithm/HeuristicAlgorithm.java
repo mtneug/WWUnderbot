@@ -6,7 +6,7 @@ package de.unimuenster.wi.wwunderbot.algorithm;
 
 import com.theaigames.blockbattle.bot.BotState;
 import com.theaigames.blockbattle.models.*;
-import de.unimuenster.wi.wwunderbot.ga.HeuristicEvaluationFunction;
+import de.unimuenster.wi.wwunderbot.ga.BotStateEvaluationFunction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +19,9 @@ import java.util.List;
  */
 public class HeuristicAlgorithm extends AbstractAlgorithm<Moves[]> {
   private final BotState state;
-  private final HeuristicEvaluationFunction evaluationFunction;
+  private final BotStateEvaluationFunction evaluationFunction;
 
-  public HeuristicAlgorithm(final BotState state, final HeuristicEvaluationFunction evaluationFunction) {
+  public HeuristicAlgorithm(final BotState state, final BotStateEvaluationFunction evaluationFunction) {
     this.state = state;
     this.evaluationFunction = evaluationFunction;
   }
@@ -33,7 +33,8 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<Moves[]> {
         state.getNextShape()
     };
 
-    return reconstructMoves(shapes, findTargetShapeState(state.getMyField(), shapes, 0));
+    ShapeStateAssessment shapeStateAssessment = findTargetShapeState(shapes, 0);
+    return reconstructMoves(shapes, shapeStateAssessment);
   }
 
   public Moves[] reconstructMoves(final Shape[] shapes, ShapeStateAssessment shapeStateAssessment) {
@@ -46,7 +47,8 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<Moves[]> {
     return moves;
   }
 
-  public ShapeStateAssessment findTargetShapeState(final Field field, final Shape[] shapes, final int shapeIndex) {
+  private ShapeStateAssessment findTargetShapeState(final Shape[] shapes, final int shapeIndex) {
+    final Field field = state.getMyField();
     final Shape shape = shapes[shapeIndex];
     final Point originalLocation = shape.getLocation().clone();
     double score;
@@ -73,9 +75,9 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<Moves[]> {
         // Calculate score of field assuming we add the shape to it
         field.addShape(shape);
         if (shapeIndex == shapes.length - 1)
-          score = evaluationFunction.evaluateField(field);
+          score = evaluationFunction.evaluate(state);
         else
-          score = (bestShapeStateAssessmentNextShape = findTargetShapeState(field, shapes, shapeIndex + 1)).score;
+          score = (bestShapeStateAssessmentNextShape = findTargetShapeState(shapes, shapeIndex + 1)).score;
         field.removeShape(shape);
 
         // Is the score better?
@@ -152,7 +154,8 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<Moves[]> {
       // Move to bottom
       while (canPerformMove(shape.oneDown()))
         moves.add(MoveType.DOWN);
-      moves.remove(moves.size() - 1);
+      if (moves.size() > 0 && moves.get(moves.size() - 1) == MoveType.DOWN)
+        moves.remove(moves.size() - 1);
       moves.add(MoveType.DROP);
 
       shape.setRotation(originalRotation);

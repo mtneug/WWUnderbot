@@ -144,6 +144,14 @@ public class BotState {
     }
   }
 
+  public boolean hasLost() {
+    return getMyField().isOutOfBoundaries(currentShape);
+  }
+
+  public boolean hasLostLookahead() {
+    return getMyField().isOutOfBoundaries(currentShape) || getMyField().isOutOfBoundaries(nextShape);
+  }
+
   public void initShapes() {
     currentShape = new Shape(currentShapeType, getMyField(), shapeLocation);
     nextShape = new Shape(nextShapeType, getMyField(), shapeLocation);

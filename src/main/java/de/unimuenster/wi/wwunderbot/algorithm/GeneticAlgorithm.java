@@ -33,9 +33,9 @@ public class GeneticAlgorithm extends AbstractAlgorithm<Moves[]> {
   };
   public final static long BREAK_MS = 15;
   public final static int NUMBER_OF_ITERATIONS = 10000;
-  public final static int NUMBER_OF_INDIVIDUALS = 300;
-  public final static int NUMBER_OF_SELECTION = 10;
-  public final static double MUTATION_RATE = 0.05;
+  public final static int NUMBER_OF_INDIVIDUALS = 30;
+  public final static int NUMBER_OF_SELECTION = 7;
+  public final static double MUTATION_RATE = 0.5;
   private final Random random = new Random();
   private final List<MovesArrayIndividual> parents = new ArrayList<>();
   private final PriorityQueue<MovesArrayIndividual> population = new PriorityQueue<>(Comparator.reverseOrder());
