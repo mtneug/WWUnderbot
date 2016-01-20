@@ -102,8 +102,8 @@ public class Moves implements List<MoveType>, Cloneable {
     return !(
         shape.getField().canBeAdded(shape) ||
             (shape.getLocation().y == -1
-                && 0 <= shape.getLocation().x
-                && shape.getLocation().x <= shape.getField().getWidth()
+                && 0 <= shape.getShape()[shape.getEmptyCellsLeft()][0].getLocation().x
+                && shape.getShape()[shape.getSize() - 1 - shape.getEmptyCellsRight()][0].getLocation().x < shape.getField().getWidth()
             )
     );
   }

@@ -69,8 +69,6 @@ public class BotParser {
 
         System.out.println(output.toString());
         System.out.flush();
-
-        System.err.println("   Bot: " + output.toString());
         break;
 
       default:

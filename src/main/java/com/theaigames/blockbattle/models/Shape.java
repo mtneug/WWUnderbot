@@ -269,7 +269,6 @@ public class Shape implements Cloneable {
     return temp;
   }
 
-
   /**
    * Uses the shape's current orientation and position to set the actual
    * location of the block-type cells on the field
@@ -333,5 +332,21 @@ public class Shape implements Cloneable {
         turnRight();
         break;
     }
+  }
+
+  public int getEmptyCellsTop() {
+    return emptyCellsTop;
+  }
+
+  public int getEmptyCellsRight() {
+    return emptyCellsRight;
+  }
+
+  public int getEmptyCellsBottom() {
+    return emptyCellsBottom;
+  }
+
+  public int getEmptyCellsLeft() {
+    return emptyCellsLeft;
   }
 }

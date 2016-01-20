@@ -5,12 +5,10 @@
 package de.unimuenster.wi.wwunderbot;
 
 import com.theaigames.blockbattle.models.*;
+import de.unimuenster.wi.wwunderbot.algorithm.HeuristicAlgorithm;
 import de.unimuenster.wi.wwunderbot.ga.Genome;
 import de.unimuenster.wi.wwunderbot.ga.HeuristicEvaluationFunction;
-
-import java.util.Arrays;
-
-import static com.theaigames.blockbattle.models.MoveType.*;
+import de.unimuenster.wi.wwunderbot.util.Visualize;
 
 /**
  * Main entry point.
@@ -21,77 +19,52 @@ import static com.theaigames.blockbattle.models.MoveType.*;
  * @author Matthias
  */
 public class TestMain {
-
   public void main(String[] args) {
-    Field field = new Field(10, 20);
-    HeuristicEvaluationFunction evaluationFunction = new HeuristicEvaluationFunction(new Genome(-0.510066, 0.760666, -0.35663, -0.184483));
+    String encodedField = "0,0,0,0,1,1,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0;0,2,0,0,0,0,2,2,0,0;0,2,2,0,0,2,2,2,0,0";
+    Field field = new FieldFactory(true).newField(10, 20, encodedField);
 
-    Moves[] movesArray = {
-        new Moves(
-            new Shape(ShapeType.J, field, new Point(3, -1)),
-            Arrays.asList(
-                LEFT,
-                LEFT,
-                LEFT,
-                LEFT,
-                LEFT,
-                DOWN,
-                DOWN,
-                DOWN,
-                DOWN,
-                LEFT,
-                DOWN,
-                DOWN,
-                TURNRIGHT,
-                TURNRIGHT,
-                DOWN,
-                DOWN,
-                DOWN,
-                DOWN,
-                DOWN,
-                DOWN,
-                DOWN,
-                DROP
-            )
-        ),
-        new Moves(
-            new Shape(ShapeType.I, field, new Point(4, -1)),
-            Arrays.asList(
-                DOWN,
-                DOWN,
-                DOWN,
-                DOWN,
-                DOWN,
-                RIGHT,
-                DOWN,
-                DOWN,
-                DOWN,
-                DOWN,
-                RIGHT,
-                RIGHT,
-                DOWN,
-                DOWN,
-                DOWN,
-                TURNLEFT,
-                TURNLEFT,
-                DOWN,
-                DROP
-            )
-        )
+    Shape[] shapes = {
+        new Shape(ShapeType.O, field, new Point(3, -1)),
+        new Shape(ShapeType.J, field, new Point(3, -1))
     };
 
-    for (int i = 0; i < 10; i++) {
-      for (Moves moves : movesArray) {
-        moves.checkAndApply();
-        field.addShape(moves.shape);
-      }
+    //    +--------------------++--------------------++--------------------+
+    //    |                    ||                    ||                    |
+    //    |                    ||                    ||                    |
+    //    |                    ||                    ||                    |
+    //    |                    ||                    ||                    |
+    //    |                    ||                    ||                    |
+    //    |                    ||                    ||                    |
+    //    |                    ||                    ||                    |
+    //    |                    ||                    ||                    |
+    //    |                    ||                    ||                    |
+    //    |                    ||                    ||                    |
+    //    |                    ||                    ||                    |
+    //    |                    ||                    ||                    |
+    //    |                    ||                    ||                    |
+    //    |                    ||                    ||                    |
+    //    |                    ||                    ||                    |
+    //    |                    ||  ░░░░              ||                    |
+    //    |                    ||  ░░                ||                    |
+    //    |                    ||  ░░                ||                    |
+    //    |  ▐▌        ▐▌▐▌    ||  ▐▌        ▐▌▐▌░░░░||  ▐▌        ▐▌▐▌    |
+    //    |  ▐▌▐▌    ▐▌▐▌▐▌    ||  ▐▌▐▌    ▐▌▐▌▐▌░░░░||  ▐▌▐▌    ▐▌▐▌▐▌    |
+    //    +--------------------++--------------------++--------------------+
 
-      System.out.println(evaluationFunction.evaluateField(field));
+    HeuristicEvaluationFunction evaluationFunction = new HeuristicEvaluationFunction(new Genome(-0.510066, 0.760666, -0.35663, -0.184483));
+    HeuristicAlgorithm algo = new HeuristicAlgorithm(null, evaluationFunction);
 
-      for (Moves moves : movesArray) {
-        field.removeShape(moves.shape);
-        moves.reset();
-      }
+    Moves[] movesArray = algo.reconstructMoves(shapes, algo.findTargetShapeState(field, shapes, 0));
+
+    Field field2 = field.clone();
+    for (Moves moves : movesArray) {
+      moves.checkAndApply();
+      field2.addShape(moves.shape);
     }
+
+    Visualize.fields(new Field[]{
+        field,
+        field2
+    });
   }
 }

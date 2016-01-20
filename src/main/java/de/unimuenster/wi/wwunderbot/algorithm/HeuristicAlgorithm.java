@@ -6,7 +6,7 @@ package de.unimuenster.wi.wwunderbot.algorithm;
 
 import com.theaigames.blockbattle.bot.BotState;
 import com.theaigames.blockbattle.models.*;
-import de.unimuenster.wi.wwunderbot.ga.BotStateEvaluationFunction;
+import de.unimuenster.wi.wwunderbot.ga.HeuristicEvaluationFunction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +19,9 @@ import java.util.List;
  */
 public class HeuristicAlgorithm extends AbstractAlgorithm<Moves[]> {
   private final BotState state;
-  private final BotStateEvaluationFunction evaluationFunction;
+  private final HeuristicEvaluationFunction evaluationFunction;
 
-  public HeuristicAlgorithm(final BotState state, final BotStateEvaluationFunction evaluationFunction) {
+  public HeuristicAlgorithm(final BotState state, final HeuristicEvaluationFunction evaluationFunction) {
     this.state = state;
     this.evaluationFunction = evaluationFunction;
   }
@@ -33,19 +33,20 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<Moves[]> {
         state.getNextShape()
     };
 
+    return reconstructMoves(shapes, findTargetShapeState(state.getMyField(), shapes, 0));
+  }
+
+  public Moves[] reconstructMoves(final Shape[] shapes, ShapeStateAssessment shapeStateAssessment) {
     final Moves[] moves = new Moves[shapes.length];
-    ShapeStateAssessment shapeStateAssessment = findTargetShapeState(shapes, 0);
 
     for (int i = 0; i < shapes.length; i++) {
       moves[i] = new Moves(shapes[i], shapeStateAssessment.getMoves(shapes[i]));
       shapeStateAssessment = shapeStateAssessment.next;
     }
-
     return moves;
   }
 
-  private ShapeStateAssessment findTargetShapeState(Shape[] shapes, final int shapeIndex) {
-    final Field field = state.getMyField();
+  public ShapeStateAssessment findTargetShapeState(final Field field, final Shape[] shapes, final int shapeIndex) {
     final Shape shape = shapes[shapeIndex];
     final Point originalLocation = shape.getLocation().clone();
     double score;
@@ -72,9 +73,9 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<Moves[]> {
         // Calculate score of field assuming we add the shape to it
         field.addShape(shape);
         if (shapeIndex == shapes.length - 1)
-          score = evaluationFunction.evaluate(state);
+          score = evaluationFunction.evaluateField(field);
         else
-          score = (bestShapeStateAssessmentNextShape = findTargetShapeState(shapes, shapeIndex + 1)).score;
+          score = (bestShapeStateAssessmentNextShape = findTargetShapeState(field, shapes, shapeIndex + 1)).score;
         field.removeShape(shape);
 
         // Is the score better?
@@ -114,14 +115,18 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<Moves[]> {
       final List<MoveType> moves = new ArrayList<>();
 
       // Rotate
+      final int originalRotation = shape.getRotation();
       switch (rotation) {
         case 2:
+          shape.turnRight();
           moves.add(MoveType.TURNRIGHT);
           // fall-through intended
         case 1:
+          shape.turnRight();
           moves.add(MoveType.TURNRIGHT);
           break;
         case 3:
+          shape.turnLeft();
           moves.add(MoveType.TURNLEFT);
           break;
         default:
@@ -130,26 +135,38 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<Moves[]> {
       }
 
       // Move to target column
-      Point originalLocation = shape.getLocation().clone();
+      final Point originalLocation = shape.getLocation().clone();
       int currentColumn = shape.getLocation().x;
       while (currentColumn != location.x) {
         if (currentColumn < location.x) {
+          shape.oneRight();
           moves.add(MoveType.RIGHT);
           currentColumn++;
         } else {
+          shape.oneLeft();
           moves.add(MoveType.LEFT);
           currentColumn--;
         }
       }
 
       // Move to bottom
-      while (state.getMyField().canBeAdded(shape.oneDown()))
+      while (canPerformMove(shape.oneDown()))
         moves.add(MoveType.DOWN);
       moves.remove(moves.size() - 1);
       moves.add(MoveType.DROP);
+
+      shape.setRotation(originalRotation);
       shape.setLocation(originalLocation);
 
       return moves;
+    }
+
+    private boolean canPerformMove(Shape shape) {
+      return shape.getField().canBeAdded(shape) ||
+          (shape.getLocation().y == -1
+              && 0 <= shape.getShape()[shape.getEmptyCellsLeft()][0].getLocation().x
+              && shape.getShape()[shape.getSize() - 1 - shape.getEmptyCellsRight()][0].getLocation().x < shape.getField().getWidth()
+          );
     }
 
     @Override

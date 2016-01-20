@@ -5,11 +5,16 @@
 package de.unimuenster.wi.wwunderbot.algorithm;
 
 import com.theaigames.blockbattle.bot.BotState;
-import com.theaigames.blockbattle.models.*;
+import com.theaigames.blockbattle.models.Field;
+import com.theaigames.blockbattle.models.MoveType;
+import com.theaigames.blockbattle.models.Moves;
+import com.theaigames.blockbattle.models.Shape;
 import de.unimuenster.wi.wwunderbot.ga.BotStateEvaluationFunction;
 import de.unimuenster.wi.wwunderbot.ga.MovesArrayIndividual;
+import de.unimuenster.wi.wwunderbot.util.Visualize;
 
 import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -177,7 +182,7 @@ public class GeneticAlgorithm extends AbstractAlgorithm<Moves[]> {
   }
 
   private void mutateChangeMoves(final MovesArrayIndividual individual) {
-    for (Moves moves: individual.object)
+    for (Moves moves : individual.object)
       // mutate every move except the last one (DROP)
       for (int i = 0; i < moves.size() - 1; i++)
         if (random.nextDouble() < MUTATION_RATE) {
