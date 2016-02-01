@@ -54,7 +54,7 @@ public class Field implements Cloneable {
     for (int i = 0; i < shape.getBlocks().length; i++) {
       final Point location = shape.getBlocks()[i].getLocation();
       if (!isOutOfBoundaries(location))
-        getCell(location).setState(CellType.BLOCK);
+        getCell(location).setState(CellType.SHAPE);
     }
   }
 
@@ -81,6 +81,14 @@ public class Field implements Cloneable {
     return 0 > x || x >= width || 0 > y || y >= height;
   }
 
+  public boolean isOutOfBoundaries(final Shape shape) {
+    for (final Cell block : shape.getBlocks())
+      if (isOutOfBoundaries(block.getLocation()))
+        return true;
+
+    return false;
+  }
+
   public boolean canBeAdded(final Cell cell) {
     if (cell.getLocation() == null)
       throw new IllegalArgumentException("No location is set");
@@ -89,7 +97,7 @@ public class Field implements Cloneable {
       return false;
 
     final Cell fieldCell = getCell(cell.getLocation());
-    return !(cell.getState() == CellType.SHAPE && (fieldCell.isSolid() || fieldCell.isBlock()));
+    return !(cell.getState() == CellType.SHAPE && (fieldCell.isShape() || fieldCell.isSolid() || fieldCell.isBlock()));
   }
 
   public boolean canBeAdded(final Shape shape) {
