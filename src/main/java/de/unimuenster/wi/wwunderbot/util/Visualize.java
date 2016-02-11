@@ -7,7 +7,10 @@ package de.unimuenster.wi.wwunderbot.util;
 import com.theaigames.blockbattle.models.Field;
 
 /**
- * @author Matthias Neugebauer
+ * @author Alexander
+ * @author Frederik
+ * @author Marco
+ * @author Matthias
  */
 public final class Visualize {
 
