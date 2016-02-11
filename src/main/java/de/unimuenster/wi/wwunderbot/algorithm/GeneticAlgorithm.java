@@ -11,10 +11,8 @@ import com.theaigames.blockbattle.models.Moves;
 import com.theaigames.blockbattle.models.Shape;
 import de.unimuenster.wi.wwunderbot.ga.BotStateEvaluationFunction;
 import de.unimuenster.wi.wwunderbot.ga.MovesArrayIndividual;
-import de.unimuenster.wi.wwunderbot.util.Visualize;
 
 import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -32,14 +30,19 @@ public class GeneticAlgorithm extends AbstractAlgorithm<Moves[]> {
       MoveType.TURNRIGHT
   };
   public final static long BREAK_MS = 15;
-  public final static int NUMBER_OF_ITERATIONS = 10000;
+  public final static int MAX_NUMBER_OF_ITERATIONS = 100000;
   public final static int NUMBER_OF_INDIVIDUALS = 30;
   public final static int NUMBER_OF_SELECTION = 7;
-  public final static double MUTATION_RATE = 0.5;
+  public final static double MAX_MUTATION_RATE = 0.4;
+  public final static double MAX_MUTATION_ADD_RATE = 0.4;
+  public final static double MAX_MUTATION_REMOVE_RATE = 0.1;
+  public final static double MUTATION_MIN_LENGTH_PERCENTAGE = 0.8;
+  public final static double MUTATION_MAX_LENGTH_PERCENTAGE = 2;
   private final Random random = new Random();
   private final List<MovesArrayIndividual> parents = new ArrayList<>();
   private final PriorityQueue<MovesArrayIndividual> population = new PriorityQueue<>(Comparator.reverseOrder());
   private final MovesArrayIndividual initialIndividual;
+  private final int[] mutationStartIndex;
   private final BotState state;
   private final BotStateEvaluationFunction evaluationFunction;
   private final Shape[] shapes;
@@ -51,6 +54,17 @@ public class GeneticAlgorithm extends AbstractAlgorithm<Moves[]> {
     this.state = state;
     this.evaluationFunction = evaluationFunction;
     this.initialIndividual = new MovesArrayIndividual(initialMoves);
+
+    mutationStartIndex = new int[initialMoves.length];
+    loop:
+    for (int m = 0; m < initialMoves.length; m++) {
+      for (int i = 0; i < initialMoves[m].size(); i++)
+        if (initialMoves[m].get(i) == MoveType.DOWN) {
+          mutationStartIndex[m] = i;
+          continue loop;
+        }
+    }
+
     this.shapes = new Shape[]{
         this.state.getCurrentShape(),
         this.state.getNextShape()
@@ -64,7 +78,7 @@ public class GeneticAlgorithm extends AbstractAlgorithm<Moves[]> {
       initPopulation();
 
       // For each iteration
-      for (int i = 0; i < NUMBER_OF_ITERATIONS; i++) {
+      for (int i = 0; i < MAX_NUMBER_OF_ITERATIONS; i++) {
         // Generate offspring and evaluate it
         iterations++;
         populateAndEvaluate();
@@ -104,7 +118,13 @@ public class GeneticAlgorithm extends AbstractAlgorithm<Moves[]> {
       MovesArrayIndividual parentOne = selectParent();
       MovesArrayIndividual parentTwo = selectParent();
 
-      MovesArrayIndividual offspring = crossover(parentOne, parentTwo);
+      //MovesArrayIndividual offspring = crossover(parentOne, parentTwo);
+      MovesArrayIndividual offspring;
+      if (random.nextBoolean())
+        offspring = parentOne.clone();
+      else
+        offspring = parentTwo.clone();
+      //offspring = crossover(parentOne, parentTwo);
       mutate(offspring);
 
       // Evaluate
@@ -182,22 +202,49 @@ public class GeneticAlgorithm extends AbstractAlgorithm<Moves[]> {
   }
 
   private void mutateChangeMoves(final MovesArrayIndividual individual) {
-    for (Moves moves : individual.object)
+    for (int m = 0; m < individual.object.length; m++) {
+      Moves moves = individual.object[m];
       // mutate every move except the last one (DROP)
-      for (int i = 0; i < moves.size() - 1; i++)
-        if (random.nextDouble() < MUTATION_RATE) {
+      for (int i = mutationStartIndex[m]; i < moves.size() - 1; i++)
+        if (random.nextDouble() < mutationRate(i, moves.size() - 1, MAX_MUTATION_RATE)) {
           MoveType move = ALLOWED_MUTATIONS[random.nextInt(ALLOWED_MUTATIONS.length)];
           moves.set(i, move);
         }
+    }
   }
 
   private void mutateAddMoves(final MovesArrayIndividual individual) {
-
+    for (int m = 0; m < individual.object.length; m++) {
+      Moves moves = individual.object[m];
+      // mutate every move except the last one (DROP)
+      for (int i = mutationStartIndex[m]; i < moves.size() - 1; i++) {
+        // not to large
+        if (moves.size() > MUTATION_MAX_LENGTH_PERCENTAGE * initialIndividual.object[m].size())
+          return;
+        if (random.nextDouble() < mutationRate(i, moves.size() - 1, MAX_MUTATION_ADD_RATE)) {
+          MoveType move = ALLOWED_MUTATIONS[random.nextInt(ALLOWED_MUTATIONS.length)];
+          moves.add(i, move);
+        }
+      }
+    }
   }
 
   private void mutateRemoveMoves(final MovesArrayIndividual individual) {
-    // not to small
+    for (int m = 0; m < individual.object.length; m++) {
+      Moves moves = individual.object[m];
+      // mutate every move except the last one (DROP)
+      for (int i = mutationStartIndex[m]; i < moves.size() - 1; i++) {
+        // not to small
+        if (moves.size() < MUTATION_MIN_LENGTH_PERCENTAGE * initialIndividual.object[m].size())
+          return;
+        if (random.nextDouble() < mutationRate(i, moves.size() - 1, MAX_MUTATION_REMOVE_RATE))
+          moves.remove(i);
+      }
+    }
+  }
 
+  protected double mutationRate(int i, int length, double max) {
+    return max * Math.pow((double) i / length, 4);
   }
 
   protected void select() {
