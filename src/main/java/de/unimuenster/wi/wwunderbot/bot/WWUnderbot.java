@@ -7,12 +7,16 @@ package de.unimuenster.wi.wwunderbot.bot;
 import com.theaigames.blockbattle.bot.AbstractBot;
 import com.theaigames.blockbattle.bot.BotState;
 import com.theaigames.blockbattle.models.Field;
+import com.theaigames.blockbattle.models.MoveType;
 import com.theaigames.blockbattle.models.Moves;
 import de.unimuenster.wi.wwunderbot.algorithm.GeneticAlgorithm;
 import de.unimuenster.wi.wwunderbot.algorithm.HeuristicAlgorithm;
 import de.unimuenster.wi.wwunderbot.ga.Genome;
 import de.unimuenster.wi.wwunderbot.ga.HeuristicEvaluationFunction;
 import de.unimuenster.wi.wwunderbot.util.Visualize;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Implementation of the WWUnderbot bot.
@@ -25,14 +29,11 @@ import de.unimuenster.wi.wwunderbot.util.Visualize;
 public class WWUnderbot extends AbstractBot {
   private final Genome genome;
 
-
   public WWUnderbot(Genome genome) {
     this.genome = genome;
   }
 
   /**
-   * TODO: ...
-   *
    * @param state current state of the bot
    * @return a list of moves to execute
    */
@@ -40,7 +41,9 @@ public class WWUnderbot extends AbstractBot {
   public Moves getMoves(final BotState state) {
     state.initShapes();
 
-    // TODO: check for skip moves
+    // Just use the skip move if we can
+    if (state.getMe().getSkips() > 0)
+      return new Moves(state.getCurrentShape(), Collections.singletonList(MoveType.SKIP));
 
     // Create evaluation function
     final HeuristicEvaluationFunction evaluationFunction = new HeuristicEvaluationFunction(genome);
@@ -53,10 +56,12 @@ public class WWUnderbot extends AbstractBot {
     final GeneticAlgorithm ga = new GeneticAlgorithm(heuristicSolution, state, evaluationFunction);
     final Moves[] geneticSolution = ga.run();
 
+    // Visualize field if they differ
     if (heuristicSolution != geneticSolution)
       compare(state, heuristicSolution, geneticSolution, evaluationFunction);
 
-    // TODO: Maybe we can save the next moves and use them as a basis for the heuristic as well?
+    // IMPROVEMENT: Maybe we can save the next moves and use them as a basis for
+    //              the heuristic as well?
     return geneticSolution[0];
   }
 
