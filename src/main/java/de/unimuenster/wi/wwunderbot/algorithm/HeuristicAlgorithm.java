@@ -59,7 +59,7 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<Moves[]> {
     // Try all possible rotations
     for (int rotation = 0; rotation < 4; rotation++) {
       // Set position to top left corner
-      // TODO: check if we even come here!
+      // IMPROVEMENT: check if we even come here
       shape.moveToOrigin().oneLeft();
 
       // Try all possible columns
@@ -88,7 +88,7 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<Moves[]> {
       }
 
       // Rotate shape
-      // TODO: check if we can do this
+      // IMPROVEMENT: check if we can do this
       shape.turnRight();
     }
 
