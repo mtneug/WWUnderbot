@@ -20,6 +20,8 @@ import java.util.Map;
  * @author Matthias
  */
 public class BotState {
+  public final static int USE_MORE_TIME_STARTING_AT_ROUND = 10;
+  public final static int ADDITIONAL_TIME = 100;
   private final FieldFactory fieldFactory;
   private int fieldWidth;
   private int fieldHeight;
@@ -134,7 +136,6 @@ public class BotState {
       // update game this_piece_position i,i: The starting position in the field for
       //                                      the current piece (top left corner of the piece bounding box)
       case "this_piece_position":
-        // TODO: set location of next piece
         final String[] split = value.split(",");
         shapeLocation = new Point(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
         break;
@@ -233,6 +234,9 @@ public class BotState {
   }
 
   void startTimer() {
-    timer = new Timer(timePerMove);
+    int additionalTime = 0;
+    if (round >= USE_MORE_TIME_STARTING_AT_ROUND && timebank > 0)
+      additionalTime = (int) Math.min(ADDITIONAL_TIME, timebank);
+    timer = new Timer(timePerMove + additionalTime);
   }
 }
