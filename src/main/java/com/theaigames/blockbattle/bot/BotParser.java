@@ -37,10 +37,15 @@ public class BotParser {
   }
 
   public void run() {
-    while (scan.hasNextLine()) {
-      final String line = scan.nextLine().trim();
-      if (line.length() == 0) continue;
-      handleLine(line);
+    try{
+      while (scan.hasNextLine()) {
+        final String line = scan.nextLine().trim();
+        if (line.length() == 0) continue;
+        handleLine(line);
+      }
+    } catch (IllegalStateException e){
+      // Scanner was closed, assuming the game ended.
+      return;
     }
   }
 

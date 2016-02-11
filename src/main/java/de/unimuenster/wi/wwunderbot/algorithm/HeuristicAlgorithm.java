@@ -41,6 +41,7 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<Moves[]> {
     final Moves[] moves = new Moves[shapes.length];
 
     for (int i = 0; i < shapes.length; i++) {
+      if(shapeStateAssessment == null) break;
       moves[i] = new Moves(shapes[i], shapeStateAssessment.getMoves(shapes[i]));
       shapeStateAssessment = shapeStateAssessment.next;
     }
@@ -51,7 +52,7 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<Moves[]> {
     final Field field = state.getMyField();
     final Shape shape = shapes[shapeIndex];
     final Point originalLocation = shape.getLocation().clone();
-    double score;
+    double newScore;
     boolean hasColumnsToAssess;
     ShapeStateAssessment bestShapeStateAssessment = new ShapeStateAssessment(shape, Double.NEGATIVE_INFINITY, null);
     ShapeStateAssessment bestShapeStateAssessmentNextShape = null;
@@ -75,14 +76,14 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<Moves[]> {
         // Calculate score of field assuming we add the shape to it
         field.addShape(shape);
         if (shapeIndex == shapes.length - 1)
-          score = evaluationFunction.evaluate(state);
+          newScore = evaluationFunction.evaluate(state);
         else
-          score = (bestShapeStateAssessmentNextShape = findTargetShapeState(shapes, shapeIndex + 1)).score;
+          newScore = (bestShapeStateAssessmentNextShape = findTargetShapeState(shapes, shapeIndex + 1)).score;
         field.removeShape(shape);
-
+                
         // Is the score better?
-        if (score > bestShapeStateAssessment.score)
-          bestShapeStateAssessment = new ShapeStateAssessment(shape, score, bestShapeStateAssessmentNextShape);
+        if (newScore >= bestShapeStateAssessment.score)
+          bestShapeStateAssessment = new ShapeStateAssessment(shape, newScore, bestShapeStateAssessmentNextShape);
 
         shape.setLocation(locationAfterRotation);
       }

@@ -48,30 +48,31 @@ public class WWUnderbot extends AbstractBot {
     // Generate initial solution
     final HeuristicAlgorithm heuristic = new HeuristicAlgorithm(state, evaluationFunction);
     final Moves[] heuristicSolution = heuristic.run();
+    
+    return heuristicSolution[0];
 
     // Genetically modify solution
-    final GeneticAlgorithm ga = new GeneticAlgorithm(heuristicSolution, state, evaluationFunction);
-    final Moves[] geneticSolution = ga.run();
-
-    if (heuristicSolution != geneticSolution)
-      compare(state, heuristicSolution, geneticSolution, evaluationFunction);
-
-    // TODO: Maybe we can save the next moves and use them as a basis for the heuristic as well?
-    return geneticSolution[0];
+    // final GeneticAlgorithm ga = new GeneticAlgorithm(heuristicSolution, state,
+    // evaluationFunction);
+    // final Moves[] geneticSolution = ga.run();
+    //
+    // if (heuristicSolution != geneticSolution)
+    // compare(state, heuristicSolution, geneticSolution, evaluationFunction);
+    //
+    // // TODO: Maybe we can save the next moves and use them as a basis for the heuristic as well?
+    // return geneticSolution[0];
   }
 
-  private void compare(BotState state, Moves[] heuristicSolution, Moves[] geneticSolution, final HeuristicEvaluationFunction evaluationFunction) {
+  private void compare(BotState state, Moves[] heuristicSolution, Moves[] geneticSolution,
+      final HeuristicEvaluationFunction evaluationFunction) {
     System.err.println("Current Shape: " + state.getCurrentShapeType());
     System.err.println("Next Shape:    " + state.getNextShapeType());
     System.err.println();
     System.err.println("Heuristic: " + evaluateMoves(state, heuristicSolution, evaluationFunction));
     System.err.println("Genetic:   " + evaluateMoves(state, geneticSolution, evaluationFunction));
 
-    Visualize.fields(new Field[]{
-        state.getMyField(),
-        performMoves(state, heuristicSolution),
-        performMoves(state, geneticSolution)
-    });
+    Visualize.fields(new Field[] {state.getMyField(), performMoves(state, heuristicSolution),
+        performMoves(state, geneticSolution)});
   }
 
   private Field performMoves(final BotState state, Moves[] movesArray) {
@@ -88,7 +89,8 @@ public class WWUnderbot extends AbstractBot {
     return f;
   }
 
-  private double evaluateMoves(final BotState state, Moves[] movesArray, final HeuristicEvaluationFunction evaluationFunction) {
+  private double evaluateMoves(final BotState state, Moves[] movesArray,
+      final HeuristicEvaluationFunction evaluationFunction) {
     final Field field = state.getMyField();
     double score;
     for (Moves moves : movesArray) {
