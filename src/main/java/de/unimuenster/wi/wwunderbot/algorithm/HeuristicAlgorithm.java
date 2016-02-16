@@ -12,7 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * This class creates a heuristic solution (shape placement) for the AI Block Battle competition. It uses a modified
+ * version of the algorithm proposed by Lee Yiyuan on his blog "Code My Road"
+ * (see <a href="https://codemyroad.wordpress.com/2013/04/14/tetris-ai-the-near-perfect-player/">Code My Road</a>).
+ * It uses four parameters (aggregated height, bumpiness, holes and complete lines) to evaluate all potential shape
+ * positions to find the ideal solution.
  *
  * @author Alexander
  * @author Frederik
@@ -57,9 +61,22 @@ public class HeuristicAlgorithm extends AbstractAlgorithm<Moves[]> {
     return reconstructMoves(shapes, shapeStateAssessment);
   }
 
+  /**
+   * Method to reconstruct the moves that must be performed to achieve the shape positionings that have been memorized
+   * by the {@code ShapeStateAssessment}s.
+   * Doing this the function creates the genomes that can be altered by the genetic algorithm (this is also the reason
+   * why the steps are reconstructed for both shapes), as well as it creates the kind of information that has to be
+   * fed into the game engine to actually play the current round.
+   *
+   * @param shapes  {@code Array} of {@code Shape}s, containing the current as well as the next shape
+   * @param shapeStateAssessment  {@code ShapeStateAssessment} containing the positions of both shapes
+   * @return  {@code Array} of {@code Moves} containing all moves to position the shapes at their optimal positions
+     */
   public Moves[] reconstructMoves(final Shape[] shapes, ShapeStateAssessment shapeStateAssessment) {
+    //  Create a Moves-object for each shape.
     final Moves[] moves = new Moves[shapes.length];
 
+    //  Obtain the necessary moves for each shape.
     for (int i = 0; i < shapes.length; i++) {
       moves[i] = new Moves(shapes[i], shapeStateAssessment.getMoves(shapes[i]));
       shapeStateAssessment = shapeStateAssessment.next;
